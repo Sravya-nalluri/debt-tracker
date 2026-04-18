@@ -1773,13 +1773,15 @@ async function loadFromSheet() {
 
     console.log("Sheet data:", data);
 
-    // ✅ ONLY LOAD IF LOCAL EMPTY
-    if (Array.isArray(data) && data.length > 0 && APP.data.length === 0) {
+    if (Array.isArray(data) && data.length > 0) {
       APP.data = data;
       localStorage.setItem('debtbook_data', JSON.stringify(data));
 
-      updateDashboard();
-      renderRecent();
+      // 🔥 FORCE UI UPDATE PROPERLY
+      requestAnimationFrame(() => {
+        updateDashboard();
+        renderRecent();
+      });
     }
 
   } catch (e) {
