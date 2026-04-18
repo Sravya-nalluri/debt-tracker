@@ -1706,9 +1706,19 @@ function stopVoice() {
    Requires user to deploy their own Apps Script.
 ═══════════════════════════════════════════ */
 async function syncToSheets(txn, action) {
-  if (!APP.SCRIPT_URL) return;
+  if (!APP.SCRIPT_URL) {
+    console.log("❌ No Script URL");
+    return;
+  }
+
+  console.log("📤 Sending to Sheets:", {
+    action,
+    sheetId: APP.sheetId,
+    txn
+  });
 
   showLoading('Syncing to Sheets...');
+
   try {
     const payload = { action, sheetId: APP.sheetId, txn };
 
@@ -1719,11 +1729,13 @@ async function syncToSheets(txn, action) {
       body: JSON.stringify(payload)
     });
 
+    console.log("📡 Response status:", res.status);
+
     const text = await res.text();
-    console.log("Sheets response:", text);
+    console.log("📥 Response body:", text);
 
   } catch(e) {
-    console.error('Sheets sync failed:', e);
+    console.error("❌ Fetch error:", e);
   }
 
   hideLoading();
