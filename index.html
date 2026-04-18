@@ -1256,10 +1256,6 @@ function init() {
   LS.loadConfig();
   LS.load();
 
-  if (APP.mode === 'sheets' && APP.sheetId) {
-    loadFromSheet();   // ✅ ADD THIS LINE
-  }
-
   if (APP.mode === 'offline' && !localStorage.getItem('debtbook_setup_done')) {
     go('setupScreen');
   } else {
@@ -1267,6 +1263,11 @@ function init() {
     updateDashboard();
     renderRecent();
     updateSyncBadge();
+  }
+
+  // ✅ CALL AFTER UI LOADS
+  if (APP.mode === 'sheets' && APP.sheetId) {
+    setTimeout(loadFromSheet, 1000);
   }
 }
 
@@ -1763,15 +1764,22 @@ function hideLoading() {
 
 async function loadFromSheet() {
   try {
+    if (!APP.sheetId) return;
+
+    console.log("Fetching sheet...");
+
     const res = await fetch(`/api/getData?sheetId=${APP.sheetId}`);
     const data = await res.json();
 
-    if (data.length > 0) {
-      APP.data = data;                 // ✅ IMPORTANT
+    console.log("Sheet data:", data);
+
+    // ✅ ONLY LOAD IF LOCAL EMPTY
+    if (Array.isArray(data) && data.length > 0 && APP.data.length === 0) {
+      APP.data = data;
       localStorage.setItem('debtbook_data', JSON.stringify(data));
 
-      updateDashboard();              // ✅ correct
-      renderRecent();                 // ✅ correct
+      updateDashboard();
+      renderRecent();
     }
 
   } catch (e) {
