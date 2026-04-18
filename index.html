@@ -1766,29 +1766,24 @@ async function loadFromSheet() {
   try {
     if (!APP.sheetId) return;
 
-    console.log("Fetching sheet...");
-
     const res = await fetch(`/api/getData?sheetId=${APP.sheetId}`);
     const data = await res.json();
 
     console.log("Sheet data:", data);
 
-    if (Array.isArray(data) && data.length > 0) {
+    // ✅ ALWAYS SYNC (even if empty)
+    if (Array.isArray(data)) {
       APP.data = data;
       localStorage.setItem('debtbook_data', JSON.stringify(data));
 
-      // 🔥 FORCE UI UPDATE PROPERLY
-      requestAnimationFrame(() => {
-        updateDashboard();
-        renderRecent();
-      });
+      updateDashboard();
+      renderRecent();
     }
 
   } catch (e) {
     console.error("Load failed:", e);
   }
 }
-
 /* ═══════════════════════════════════════════
    PWA SERVICE WORKER REGISTRATION
 ═══════════════════════════════════════════ */
