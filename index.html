@@ -1256,6 +1256,10 @@ function init() {
   LS.loadConfig();
   LS.load();
 
+  if (APP.mode === 'sheets' && APP.sheetId) {
+    loadFromSheet();   // ✅ ADD THIS LINE
+  }
+
   if (APP.mode === 'offline' && !localStorage.getItem('debtbook_setup_done')) {
     go('setupScreen');
   } else {
@@ -1755,6 +1759,24 @@ function showLoading(msg = 'Loading...') {
 
 function hideLoading() {
   document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+async function loadFromSheet() {
+  try {
+    const res = await fetch(`/api/getData?sheetId=${APP.sheetId}`);
+    const data = await res.json();
+
+    if (data.length > 0) {
+      APP.data = data;                 // ✅ IMPORTANT
+      localStorage.setItem('debtbook_data', JSON.stringify(data));
+
+      updateDashboard();              // ✅ correct
+      renderRecent();                 // ✅ correct
+    }
+
+  } catch (e) {
+    console.error("Load failed:", e);
+  }
 }
 
 /* ═══════════════════════════════════════════
