@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f2027">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DebtBook">
+<link rel="manifest" href="manifest.json">
+<title>DebtBook – Personal Debt Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #0a0f1e;
+  --surface: #131929;
+  --surface2: #1c2640;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0f4ff;
+  --text2: #8a96b3;
+  --green: #00e5a0;
+  --green-dim: rgba(0,229,160,0.12);
+  --red: #ff4d6d;
+  --red-dim: rgba(255,77,109,0.12);
+  --gold: #ffd166;
+  --gold-dim: rgba(255,209,102,0.12);
+  --radius: 18px;
+  --radius-sm: 12px;
+ --font-head: 'Plus Jakarta Sans', sans-serif;
+--font-body: 'Plus Jakarta Sans', sans-serif;;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100svh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: -20%;
+  left: -10%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(ellipse, rgba(0,229,160,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -10%;
+  right: -10%;
+  width: 50%;
+  height: 50%;
+  background: radial-gradient(ellipse, rgba(255,77,109,0.05) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── SCREENS ─── */
+.screen {
+  display: none;
+  min-height: 100svh;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  padding-bottom: calc(20px + var(--safe-bottom));
+  animation: fadeSlideIn 0.25s ease;
+}
+.screen.active { display: flex; }
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── HEADER ─── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(10,15,30,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-title {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 8px 0;
+}
+
+.back-btn svg { width: 18px; height: 18px; }
+
+/* ─── HOME SCREEN ─── */
+.home-brand {
+  padding: 24px 20px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, var(--green), #00bcd4);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+
+.brand-name {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(90deg, var(--text), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─── SUMMARY CARD ─── */
+.summary-card {
+  margin: 12px 16px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green), var(--gold), var(--red));
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sum-box {
+  flex: 1;
+  text-align: center;
+  padding: 12px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.sum-box.g { background: var(--green-dim); }
+.sum-box.r { background: var(--red-dim); }
+.sum-box.b { background: var(--gold-dim); }
+
+.sum-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+
+.sum-amount {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sum-box.g .sum-amount { color: var(--green); }
+.sum-box.r .sum-amount { color: var(--red); }
+.sum-box.b .sum-amount { color: var(--gold); }
+
+/* ─── ACTION CARDS ─── */
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 8px 16px;
+}
+
+.action-card {
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  active-scale: 0.96;
+}
+
+.action-card:active { transform: scale(0.96); }
+
+.action-card.given {
+  background: linear-gradient(135deg, rgba(0,229,160,0.15), rgba(0,188,212,0.08));
+  border-color: rgba(0,229,160,0.25);
+}
+
+.action-card.taken {
+  background: linear-gradient(135deg, rgba(255,77,109,0.15), rgba(255,100,50,0.08));
+  border-color: rgba(255,77,109,0.25);
+}
+
+.action-icon { font-size: 28px; }
+
+.action-title {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.action-card.given .action-title { color: var(--green); }
+.action-card.taken .action-title { color: var(--red); }
+
+.action-sub { font-size: 11px; color: var(--text2); }
+
+/* ─── SECTION HEADER ─── */
+.sec-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 8px;
+}
+
+.sec-title {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text2);
+}
+
+/* ─── PERSON CARD ─── */
+.person-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 4px 16px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+
+.person-card:active { transform: scale(0.98); background: var(--surface2); }
+
+.avatar {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.avatar.g { background: var(--green-dim); color: var(--green); border: 1.5px solid rgba(0,229,160,0.3); }
+.avatar.r { background: var(--red-dim); color: var(--red); border: 1.5px solid rgba(255,77,109,0.3); }
+
+.p-info { flex: 1; min-width: 0; }
+.p-name {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
+}
+.p-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.p-amount { font-family: var(--font-head); font-size: 15px; font-weight: 700; }
+.p-amount.g { color: var(--green); }
+.p-amount.r { color: var(--red); }
+
+/* ─── EMPTY STATE ─── */
+.empty {
+  text-align: center;
+  padding: 50px 30px;
+  color: var(--text2);
+}
+
+.empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+.empty p { font-size: 14px; }
+
+/* ─── TYPE SCREEN ─── */
+.type-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 20px;
+  flex: 1;
+  justify-content: center;
+}
+
+.type-card {
+  border-radius: var(--radius);
+  padding: 30px 24px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.type-card:active { transform: scale(0.97); }
+
+.type-card.given {
+  background: linear-gradient(135deg, rgba(0,229,160,0.12), rgba(0,188,212,0.06));
+  border-color: rgba(0,229,160,0.3);
+}
+
+.type-card.taken {
+  background: linear-gradient(135deg, rgba(255,77,109,0.12), rgba(255,100,50,0.06));
+  border-color: rgba(255,77,109,0.3);
+}
+
+.type-emoji { font-size: 40px; }
+
+.type-text h2 {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.type-text p { font-size: 13px; color: var(--text2); margin-top: 4px; }
+.type-card.given h2 { color: var(--green); }
+.type-card.taken h2 { color: var(--red); }
+
+/* ─── FORM ─── */
+.form-body {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.form-type-badge.given { background: var(--green-dim); color: var(--green); }
+.form-type-badge.taken { background: var(--red-dim); color: var(--red); }
+
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+
+.field-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text2);
+}
+
+.field-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.field-input {
+  flex: 1;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+
+.field-input:focus { border-color: var(--green); }
+.field-input::placeholder { color: var(--text2); }
+.field-input[type="date"] { color-scheme: dark; }
+
+.voice-btn {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+  min-width: 52px;
+}
+
+.voice-btn:active, .voice-btn.listening {
+  background: rgba(0,229,160,0.15);
+  border-color: var(--green);
+}
+
+.submit-btn {
+  margin-top: auto;
+  padding: 18px;
+  border-radius: var(--radius);
+  border: none;
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.submit-btn:active { transform: scale(0.98); opacity: 0.85; }
+.submit-btn.given { background: linear-gradient(135deg, var(--green), #00bcd4); color: #0a0f1e; }
+.submit-btn.taken { background: linear-gradient(135deg, var(--red), #ff8c42); color: white; }
+
+/* ─── TABS ─── */
+.tabs {
+  display: flex;
+  margin: 8px 16px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  border: 1px solid var(--border);
+}
+
+.tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-head);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  color: var(--text2);
+}
+
+.tab.active {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ─── TRANSACTION CARD ─── */
+.txn-card {
+  margin: 6px 16px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.txn-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--green);
+  border-radius: 3px 0 0 3px;
+}
+
+.txn-card.taken::before { background: var(--red); }
+.txn-card.closed::before { background: var(--text2); }
+
+.txn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.txn-date { font-size: 12px; color: var(--text2); }
+
+.txn-status {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 3px 8px;
+  border-radius: 100px;
+}
+
+.txn-status.active { background: var(--green-dim); color: var(--green); }
+.txn-status.closed { background: rgba(138,150,179,0.15); color: var(--text2); }
+
+.txn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.txn-item { }
+.txn-item-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+.txn-item-val {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.txn-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.txn-total-label { font-size: 12px; color: var(--text2); }
+.txn-total-val {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--green);
+}
+
+.txn-card.taken .txn-total-val { color: var(--red); }
+
+.close-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1.5px solid rgba(0,229,160,0.4);
+  background: var(--green-dim);
+  color: var(--green);
+  border-radius: 10px;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.close-btn:active { background: rgba(0,229,160,0.25); }
+
+/* ─── FAB ─── */
+.fab {
+  position: fixed;
+  bottom: calc(24px + var(--safe-bottom));
+  right: 20px;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--green), #00bcd4);
+  color: #0a0f1e;
+  font-size: 26px;
+  font-weight: 300;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(0,229,160,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.fab:active { transform: scale(0.93); box-shadow: 0 4px 15px rgba(0,229,160,0.2); }
+
+/* ─── TOAST ─── */
+.toast {
+  position: fixed;
+  bottom: calc(100px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 20px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  white-space: nowrap;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ─── PERSON HEADER ─── */
+.person-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 6px;
+}
+
+.person-header .avatar-lg {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  font-size: 28px;
+  font-family: var(--font-head);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.person-header .avatar-lg.g { background: var(--green-dim); color: var(--green); border: 2px solid rgba(0,229,160,0.3); }
+.person-header .avatar-lg.r { background: var(--red-dim); color: var(--red); border: 2px solid rgba(255,77,109,0.3); }
+
+.person-header h2 {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.person-net {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* ─── SEARCH ─── */
+.search-wrap {
+  padding: 8px 16px;
+}
+
+.search-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  padding: 11px 18px 11px 40px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  position: relative;
+  -webkit-appearance: none;
+}
+
+.search-input:focus { border-color: rgba(0,229,160,0.4); }
+.search-input::placeholder { color: var(--text2); }
+
+.search-wrap-inner {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text2);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+/* ─── SYNC INDICATOR ─── */
+.sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text2);
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.sync-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.sync-dot.syncing {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ─── SCROLLABLE ─── */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* ─── NET PER PERSON ─── */
+.net-chip {
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-head);
+  padding: 4px 10px;
+  border-radius: 100px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.net-chip.pos { background: var(--green-dim); color: var(--green); }
+.net-chip.neg { background: var(--red-dim); color: var(--red); }
+
+/* ─── LIST FILTER TABS ─── */
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  overflow-x: auto;
+}
+
+.filter-tabs::-webkit-scrollbar { display: none; }
+
+.ftab {
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  color: var(--text2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  background: none;
+}
+
+.ftab.active {
+  background: var(--surface2);
+  color: var(--text);
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* ─── SETUP SCREEN ─── */
+.setup-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 24px;
+  text-align: center;
+  gap: 20px;
+}
+
+.setup-icon { font-size: 64px; }
+
+.setup-body h1 {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.setup-body p {
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.setup-btn {
+  width: 100%;
+  max-width: 320px;
+  padding: 18px;
+  border-radius: var(--radius);
+  border: none;
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--green), #00bcd4);
+  color: #0a0f1e;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.setup-btn:active { transform: scale(0.97); opacity: 0.85; }
+
+.setup-btn.secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+
+.divider {
+  color: var(--text2);
+  font-size: 12px;
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 42%;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider::before { left: 0; }
+.divider::after { right: 0; }
+
+/* ─── LOADING OVERLAY ─── */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,15,30,0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  gap: 16px;
+  display: none;
+}
+
+.loading-overlay.show { display: flex; }
+
+.spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text { color: var(--text2); font-size: 14px; }
+
+/* Settings icon in header */
+.icon-btn {
+  width: 36px; height: 36px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* ─── SHEETS CONNECT ─── */
+.sheets-info {
+  margin: 0 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,209,102,0.08);
+  border: 1px solid rgba(255,209,102,0.2);
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+.sheets-info strong { color: var(--gold); }
+
+/* responsive utility */
+.mt-auto { margin-top: auto; }
+.gap-8 { gap: 8px; }
+.flex-col { display: flex; flex-direction: column; }
+</style>
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Saving...</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: SETUP (Google Sheets)
+═══════════════════════════════════════════ -->
+<div class="screen active" id="setupScreen">
+  <div class="setup-body">
+    <div class="setup-icon">📒</div>
+    <h1>Your Personal Debt Notebook</h1>
+    <p>Track money you gave & took. Connect Google Sheets to keep your data safe across devices — or start offline.</p>
+
+    <button class="setup-btn" onclick="connectSheets()">
+      📊 Connect Google Sheets
+    </button>
+
+    <div class="divider">or</div>
+
+    <button class="setup-btn secondary" onclick="startOffline()">
+      📱 Use Offline (Local Only)
+    </button>
+
+    <div id="sheetIdRow" style="width:100%;max-width:320px;display:none;">
+      <p style="text-align:left;margin-bottom:6px;font-size:12px;color:var(--text2);">Google Sheet ID (from URL)</p>
+      <input class="field-input" id="sheetIdInput" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" style="margin-bottom:10px;">
+      <button class="setup-btn" onclick="saveSheetId()">Connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: HOME
+═══════════════════════════════════════════ -->
+<div class="screen" id="homeScreen">
+  <!-- Brand header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="brand-icon">💰</div>
+      <span class="brand-name">DebtBook</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="sync-badge">
+        <div class="sync-dot" id="syncDot"></div>
+        <span id="syncLabel">Local</span>
+      </div>
+      <div class="icon-btn" onclick="go('settingsScreen')" title="Settings">⚙️</div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-card">
+    <div class="sum-label" style="margin-bottom:12px;">Your Balance Overview</div>
+    <div class="summary-row">
+      <div class="sum-box g">
+        <div class="sum-label">You Get</div>
+        <div class="sum-amount" id="sumGet">₹0</div>
+      </div>
+      <div class="sum-box r">
+        <div class="sum-label">You Pay</div>
+        <div class="sum-amount" id="sumPay">₹0</div>
+      </div>
+      <div class="sum-box b">
+        <div class="sum-label">Balance</div>
+        <div class="sum-amount" id="sumBal">₹0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action cards -->
+  <div class="action-grid">
+    <div class="action-card given" onclick="openList('given')">
+      <div class="action-icon">💚</div>
+      <div class="action-title">Given</div>
+      <div class="action-sub">Money you lent</div>
+    </div>
+    <div class="action-card taken" onclick="openList('taken')">
+      <div class="action-icon">❤️</div>
+      <div class="action-title">Taken</div>
+      <div class="action-sub">Money you owe</div>
+    </div>
+  </div>
+
+  <!-- Recent activity -->
+  <div class="sec-header">
+    <span class="sec-title">Recent Activity</span>
+  </div>
+
+  <div class="scroll-area" id="recentList">
+    <div class="empty">
+      <div class="empty-icon">🌱</div>
+      <p>No transactions yet.<br>Tap + to add your first entry.</p>
+    </div>
+  </div>
+
+  <button class="fab" onclick="go('typeScreen')">+</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: TYPE SELECTION
+═══════════════════════════════════════════ -->
+<div class="screen" id="typeScreen">
+  <div class="header">
+    <button class="back-btn" onclick="go('homeScreen')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </button>
+    <span class="header-title">New Entry</span>
+    <div style="width:60px;"></div>
+  </div>
+
+  <div style="padding:20px 20px 8px;">
+    <p style="color:var(--text2);font-size:14px;">What are you recording?</p>
+  </div>
+
+  <div class="type-grid">
+    <div class="type-card given" onclick="selectType('given')">
+      <div class="type-emoji">💰</div>
+      <div class="type-text">
+        <h2>I Gave</h2>
+        <p>Someone owes you money</p>
+      </div>
+    </div>
+    <div class="type-card taken" onclick="selectType('taken')">
+      <div class="type-emoji">🤝</div>
+      <div class="type-text">
+        <h2>I Took</h2>
+        <p>You owe someone money</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: FORM
+═══════════════════════════════════════════ -->
+<div class="screen" id="formScreen">
+  <div class="header">
+    <button class="back-btn" onclick="go('typeScreen')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </button>
+    <span class="header-title">Add Transaction</span>
+    <div style="width:60px;"></div>
+  </div>
+
+  <div class="form-body">
+    <div id="formTypeBadge" class="form-type-badge given">💰 Given</div>
+
+    <!-- Name -->
+    <div class="field-group">
+      <div class="field-label">Full Name</div>
+      <div class="field-row">
+        <input class="field-input" id="fName" placeholder="e.g. Ravi Kumar" autocomplete="name" spellcheck="false">
+        <button class="voice-btn" id="voiceBtn" onclick="startVoice()" title="Voice Input">🎙️</button>
+      </div>
+      <div id="voiceStatus" style="font-size:11px;color:var(--text2);display:none;">Listening... speak the name</div>
+    </div>
+
+    <!-- Amount -->
+    <div class="field-group">
+      <div class="field-label">Amount (₹)</div>
+      <input class="field-input" id="fAmount" type="number" placeholder="5000" inputmode="decimal" min="1">
+    </div>
+
+    <!-- Interest -->
+    <div class="field-group">
+      <div class="field-label">Interest % / Month (optional)</div>
+      <input class="field-input" id="fInterest" type="number" placeholder="2" inputmode="decimal" min="0" max="100">
+    </div>
+
+    <!-- Date -->
+    <div class="field-group">
+      <div class="field-label">Date</div>
+      <input class="field-input" id="fDate" type="date">
+    </div>
+
+    <!-- Notes -->
+    <div class="field-group">
+      <div class="field-label">Notes (optional)</div>
+      <input class="field-input" id="fNote" placeholder="What is this for?">
+    </div>
+
+    <button class="submit-btn given" id="submitBtn" onclick="saveTxn()">Save Transaction</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: LIST
+═══════════════════════════════════════════ -->
+<div class="screen" id="listScreen">
+  <div class="header">
+    <button class="back-btn" onclick="go('homeScreen')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </button>
+    <span class="header-title" id="listTitle">Given List</span>
+    <div style="width:60px;"></div>
+  </div>
+
+  <div class="search-wrap">
+    <div class="search-wrap-inner">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="Search by name..." oninput="filterList()">
+    </div>
+  </div>
+
+  <div class="scroll-area" id="listContent">
+    <div class="empty"><div class="empty-icon">🌱</div><p>No entries yet.</p></div>
+  </div>
+
+  <button class="fab" onclick="go('typeScreen')">+</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: PERSON DETAIL
+═══════════════════════════════════════════ -->
+<div class="screen" id="detailScreen">
+  <div class="header">
+    <button class="back-btn" onclick="go('listScreen')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </button>
+    <span class="header-title" id="detailName">Person</span>
+    <div style="width:60px;"></div>
+  </div>
+
+  <div id="personHeaderArea" class="person-header"></div>
+
+  <div class="tabs">
+    <div class="tab active" id="tabCurrent" onclick="showDetailTab('current')">Current</div>
+    <div class="tab" id="tabHistory" onclick="showDetailTab('history')">History</div>
+  </div>
+
+  <div class="scroll-area">
+    <div class="tab-content active" id="currentTab"></div>
+    <div class="tab-content" id="historyTab"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCREEN: SETTINGS
+═══════════════════════════════════════════ -->
+<div class="screen" id="settingsScreen">
+  <div class="header">
+    <button class="back-btn" onclick="go('homeScreen')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </button>
+    <span class="header-title">Settings</span>
+    <div style="width:60px;"></div>
+  </div>
+
+  <div class="form-body">
+    <div class="field-group">
+      <div class="field-label">Google Sheet ID</div>
+      <input class="field-input" id="settingsSheetId" placeholder="Paste Sheet ID here">
+      <div style="font-size:11px;color:var(--text2);margin-top:4px;">
+        From the Sheet URL: docs.google.com/spreadsheets/d/<strong style="color:var(--gold);">SHEET_ID</strong>/edit
+      </div>
+    </div>
+
+    <button class="submit-btn given" onclick="saveSettings()">Save Settings</button>
+
+    <div class="sheets-info">
+      <strong>📊 How Google Sheets sync works:</strong><br><br>
+      1. Create a new Google Sheet<br>
+      2. Copy the Sheet ID from the URL<br>
+      3. Paste it above and save<br>
+      4. The app will read/write your debt data automatically<br><br>
+      <strong>Note:</strong> Your Google account must have edit access to the Sheet.
+    </div>
+
+    <div class="field-group" style="margin-top:16px;">
+      <div class="field-label">Danger Zone</div>
+      <button class="submit-btn" style="background:var(--red-dim);color:var(--red);border:1.5px solid rgba(255,77,109,0.3);" onclick="clearAll()">
+        🗑️ Clear All Local Data
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   STATE & STORAGE
+═══════════════════════════════════════════ */
+let APP = {
+  data: [],
+  mode: 'offline', // 'offline' | 'sheets'
+  sheetId: '',
+  currentType: '',
+  selectedType: '',
+  selectedPerson: '',
+  SCRIPT_URL: '', // Apps Script Web App URL - user sets this
+};
+
+const LS = {
+  save() { localStorage.setItem('debtbook_data', JSON.stringify(APP.data)); },
+  load() {
+    const raw = localStorage.getItem('debtbook_data');
+    if (raw) APP.data = JSON.parse(raw);
+  },
+  saveConfig() {
+    localStorage.setItem('debtbook_config', JSON.stringify({
+      mode: APP.mode,
+      sheetId: APP.sheetId,
+      scriptUrl: APP.SCRIPT_URL
+    }));
+  },
+  loadConfig() {
+    const raw = localStorage.getItem('debtbook_config');
+    if (raw) {
+      const c = JSON.parse(raw);
+      APP.mode = c.mode || 'offline';
+      APP.sheetId = c.sheetId || '';
+      APP.SCRIPT_URL = c.scriptUrl || '';
+    }
+  }
+};
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+function init() {
+  LS.loadConfig();
+  LS.load();
+
+  if (APP.mode === 'offline' && !localStorage.getItem('debtbook_setup_done')) {
+    go('setupScreen');
+  } else {
+    go('homeScreen');
+    updateDashboard();
+    renderRecent();
+    updateSyncBadge();
+  }
+}
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+function go(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+/* ═══════════════════════════════════════════
+   SETUP
+═══════════════════════════════════════════ */
+function connectSheets() {
+  document.getElementById('sheetIdRow').style.display = 'block';
+}
+
+function saveSheetId() {
+  const id = document.getElementById('sheetIdInput').value.trim();
+  if (!id) return toast('Please paste a Sheet ID');
+  APP.sheetId = id;
+  APP.mode = 'sheets';
+  LS.saveConfig();
+  finishSetup();
+}
+
+function startOffline() {
+  APP.mode = 'offline';
+  LS.saveConfig();
+  finishSetup();
+}
+
+function finishSetup() {
+  localStorage.setItem('debtbook_setup_done', '1');
+  updateSyncBadge();
+  go('homeScreen');
+  updateDashboard();
+}
+
+/* ═══════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════ */
+function openSettings() {
+  document.getElementById('settingsSheetId').value = APP.sheetId;
+  go('settingsScreen');
+}
+
+function saveSettings() {
+  const id = document.getElementById('settingsSheetId').value.trim();
+  APP.sheetId = id;
+  APP.mode = id ? 'sheets' : 'offline';
+  LS.saveConfig();
+  updateSyncBadge();
+  toast('Settings saved!');
+  go('homeScreen');
+}
+
+function clearAll() {
+  if (!confirm('Are you sure? This will delete all local data.')) return;
+  APP.data = [];
+  localStorage.removeItem('debtbook_data');
+  localStorage.removeItem('debtbook_setup_done');
+  LS.save();
+  updateDashboard();
+  renderRecent();
+  toast('Cleared!');
+}
+
+/* ═══════════════════════════════════════════
+   SYNC BADGE
+═══════════════════════════════════════════ */
+function updateSyncBadge() {
+  const dot = document.getElementById('syncDot');
+  const label = document.getElementById('syncLabel');
+  if (APP.mode === 'sheets' && APP.sheetId) {
+    dot.style.background = 'var(--gold)';
+    label.textContent = 'Sheets';
+  } else {
+    dot.style.background = 'var(--green)';
+    label.textContent = 'Local';
+  }
+}
+
+/* ═══════════════════════════════════════════
+   TYPE & FORM
+═══════════════════════════════════════════ */
+function selectType(type) {
+  APP.currentType = type;
+  const badge = document.getElementById('formTypeBadge');
+  const btn = document.getElementById('submitBtn');
+
+  if (type === 'given') {
+    badge.className = 'form-type-badge given';
+    badge.textContent = '💰 Given – You Lent Money';
+    btn.className = 'submit-btn given';
+  } else {
+    badge.className = 'form-type-badge taken';
+    badge.textContent = '🤝 Taken – You Borrowed Money';
+    btn.className = 'submit-btn taken';
+  }
+
+  document.getElementById('fDate').value = todayStr();
+  document.getElementById('fName').value = '';
+  document.getElementById('fAmount').value = '';
+  document.getElementById('fInterest').value = '';
+  document.getElementById('fNote').value = '';
+  go('formScreen');
+}
+
+function todayStr() {
+  return new Date().toISOString().split('T')[0];
+}
+
+async function saveTxn() {
+  const name = document.getElementById('fName').value.trim();
+  const amount = parseFloat(document.getElementById('fAmount').value);
+  const interest = parseFloat(document.getElementById('fInterest').value) || 0;
+  const date = document.getElementById('fDate').value || todayStr();
+  const note = document.getElementById('fNote').value.trim();
+
+  if (!name) return toast('⚠️ Please enter a name');
+  if (!amount || amount <= 0) return toast('⚠️ Enter a valid amount');
+
+  const txn = {
+    id: Date.now().toString(),
+    name: name.trim().toLowerCase(),
+    amount,
+    interest,
+    type: APP.currentType,
+    start: date,
+    note,
+    status: 'active',
+    createdAt: new Date().toISOString()
+  };
+
+  APP.data.push(txn);
+  LS.save();
+
+  if (APP.mode === 'sheets' && APP.sheetId) {
+    await syncToSheets(txn, 'append');
+  }
+
+  updateDashboard();
+  renderRecent();
+  toast('✅ Transaction saved!');
+  go('homeScreen');
+}
+
+/* ═══════════════════════════════════════════
+   CALCULATION
+═══════════════════════════════════════════ */
+function calcTxn(txn) {
+  const days = Math.max(0, Math.floor((Date.now() - new Date(txn.start)) / (1000 * 60 * 60 * 24)));
+  const dailyInt = (txn.amount * txn.interest) / (100 * 30);
+  const interestAmt = dailyInt * days;
+  const total = txn.amount + interestAmt;
+  return { days, interestAmt, total };
+}
+
+/* ═══════════════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════════════ */
+function updateDashboard() {
+  let get = 0, pay = 0;
+  APP.data.forEach(d => {
+    if (d.status !== 'active') return;
+    const { total } = calcTxn(d);
+    if (d.type === 'given') get += total;
+    else pay += total;
+  });
+
+  document.getElementById('sumGet').textContent = fmt(get);
+  document.getElementById('sumPay').textContent = fmt(pay);
+  const bal = get - pay;
+  const balEl = document.getElementById('sumBal');
+  balEl.textContent = fmt(Math.abs(bal));
+  balEl.style.color = bal >= 0 ? 'var(--green)' : 'var(--red)';
+}
+
+function fmt(n) {
+  return '₹' + Number(n).toLocaleString('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function fmtFull(n) {
+  return '₹' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/* ═══════════════════════════════════════════
+   RECENT ACTIVITY
+═══════════════════════════════════════════ */
+function renderRecent() {
+  const el = document.getElementById('recentList');
+  const sorted = [...APP.data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 8);
+
+  if (!sorted.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🌱</div><p>No transactions yet.<br>Tap + to add your first entry.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = sorted.map(d => {
+    const { total } = calcTxn(d);
+    const color = d.type === 'given' ? 'g' : 'r';
+    const initials = d.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const statusTag = d.status === 'closed' ? '<span style="font-size:10px;color:var(--text2);"> · Closed</span>' : '';
+    return `
+      <div class="person-card" onclick="quickOpenPerson('${d.name}', '${d.type}')">
+        <div class="avatar ${color}">${initials}</div>
+        <div class="p-info">
+          <div class="p-name">${d.name}${statusTag}</div>
+          <div class="p-sub">${d.type === 'given' ? 'You lent' : 'You owe'} · ${formatDate(d.start)}</div>
+        </div>
+        <div class="p-amount ${color}">${fmt(total)}</div>
+      </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   LIST SCREEN
+═══════════════════════════════════════════ */
+let currentListType = 'given';
+
+function openList(type) {
+  APP.selectedType = type;
+  currentListType = type;
+  document.getElementById('listTitle').textContent = type === 'given' ? 'Given – Money Lent' : 'Taken – Money Owed';
+  document.getElementById('searchInput').value = '';
+  renderList(type);
+  go('listScreen');
+}
+
+function renderList(type, filter = '') {
+  const el = document.getElementById('listContent');
+
+  const grouped = {};
+  APP.data.forEach(d => {
+    if (d.type !== type || d.status !== 'active') return;
+    const key = d.name;
+    if (!grouped[key]) grouped[key] = { total: 0, count: 0, latest: d.start };
+    const { total } = calcTxn(d);
+    grouped[key].total += total;
+    grouped[key].count++;
+    if (d.start > grouped[key].latest) grouped[key].latest = d.start;
+  });
+
+  const names = Object.keys(grouped).filter(n =>
+    !filter || n.toLowerCase().includes(filter.toLowerCase())
+  ).sort();
+
+  if (!names.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">${type === 'given' ? '💚' : '❤️'}</div><p>No ${type} entries yet.</p></div>`;
+    return;
+  }
+
+  const color = type === 'given' ? 'g' : 'r';
+  el.innerHTML = names.map(name => {
+    const g = grouped[name];
+    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    return `
+      <div class="person-card" onclick="openPerson('${name}')">
+        <div class="avatar ${color}">${initials}</div>
+        <div class="p-info">
+          <div class="p-name">${name}</div>
+          <div class="p-sub">${g.count} transaction${g.count > 1 ? 's' : ''} · Last: ${formatDate(g.latest)}</div>
+        </div>
+        <div class="p-amount ${color}">${fmt(g.total)}</div>
+      </div>`;
+  }).join('');
+}
+
+function filterList() {
+  const q = document.getElementById('searchInput').value;
+  renderList(currentListType, q);
+}
+
+/* ═══════════════════════════════════════════
+   PERSON DETAIL
+═══════════════════════════════════════════ */
+function openPerson(name) {
+  APP.selectedPerson = name;
+  renderPersonDetail(name, APP.selectedType);
+  go('detailScreen');
+}
+
+function quickOpenPerson(name, type) {
+  APP.selectedType = type;
+  APP.selectedPerson = name;
+  renderPersonDetail(name, type);
+  go('detailScreen');
+}
+
+function renderPersonDetail(name, type) {
+  document.getElementById('detailName').textContent = capitalise(name);
+
+  const color = type === 'given' ? 'g' : 'r';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
+  // Net for this person
+  let activeTotal = 0;
+  APP.data.forEach(d => {
+    if (d.name !== name || d.type !== type || d.status !== 'active') return;
+    activeTotal += calcTxn(d).total;
+  });
+
+  document.getElementById('personHeaderArea').innerHTML = `
+    <div class="avatar-lg ${color}">${initials}</div>
+    <h2>${capitalise(name)}</h2>
+    <div class="person-net">${type === 'given' ? 'Owes you' : 'You owe'}</div>
+    <div class="net-chip ${type === 'given' ? 'pos' : 'neg'}">${fmtFull(activeTotal)}</div>
+  `;
+
+  renderTxnCards(name, type, 'active', 'currentTab');
+  renderTxnCards(name, type, 'closed', 'historyTab');
+  showDetailTab('current');
+}
+
+function renderTxnCards(name, type, status, containerId) {
+  const el = document.getElementById(containerId);
+  const txns = APP.data.map((d, i) => ({ ...d, idx: i }))
+    .filter(d => d.name === name && d.type === type && d.status === status);
+
+  if (!txns.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">${status === 'active' ? '📋' : '📁'}</div><p>No ${status} transactions.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = txns.map(d => {
+    const { days, interestAmt, total } = calcTxn(d);
+    const closedClass = status === 'closed' ? 'closed' : (type === 'taken' ? 'taken' : '');
+    const closeBtn = status === 'active'
+      ? `<button class="close-btn" onclick="closeTxn(${d.idx})">✅ Mark as Settled</button>`
+      : '';
+    return `
+      <div class="txn-card ${closedClass}">
+        <div class="txn-header">
+          <div class="txn-date">📅 ${formatDate(d.start)}</div>
+          <div class="txn-status ${status}">${status}</div>
+        </div>
+        <div class="txn-grid">
+          <div class="txn-item">
+            <div class="txn-item-label">Principal</div>
+            <div class="txn-item-val">${fmtFull(d.amount)}</div>
+          </div>
+          <div class="txn-item">
+            <div class="txn-item-label">Interest / Month</div>
+            <div class="txn-item-val">${d.interest}%</div>
+          </div>
+          <div class="txn-item">
+            <div class="txn-item-label">⏱ Days</div>
+            <div class="txn-item-val">${days}</div>
+          </div>
+          <div class="txn-item">
+            <div class="txn-item-label">📈 Interest Earned</div>
+            <div class="txn-item-val">${fmtFull(interestAmt)}</div>
+          </div>
+        </div>
+        ${d.note ? `<div style="font-size:12px;color:var(--text2);margin-bottom:10px;">📝 ${d.note}</div>` : ''}
+        <div class="txn-total-row">
+          <div class="txn-total-label">🔢 Total Due</div>
+          <div class="txn-total-val">${fmtFull(total)}</div>
+        </div>
+        ${closeBtn}
+      </div>`;
+  }).join('');
+}
+
+function closeTxn(idx) {
+  if (!confirm('Mark this transaction as settled?')) return;
+  APP.data[idx].status = 'closed';
+  APP.data[idx].closedAt = new Date().toISOString();
+  LS.save();
+
+  if (APP.mode === 'sheets' && APP.sheetId) {
+    syncToSheets(APP.data[idx], 'update');
+  }
+
+  updateDashboard();
+  renderPersonDetail(APP.selectedPerson, APP.selectedType);
+  renderRecent();
+  toast('✅ Marked as settled!');
+}
+
+/* ═══════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════ */
+function showDetailTab(tab) {
+  document.getElementById('currentTab').classList.toggle('active', tab === 'current');
+  document.getElementById('historyTab').classList.toggle('active', tab === 'history');
+  document.getElementById('tabCurrent').classList.toggle('active', tab === 'current');
+  document.getElementById('tabHistory').classList.toggle('active', tab === 'history');
+}
+
+/* ═══════════════════════════════════════════
+   VOICE INPUT
+═══════════════════════════════════════════ */
+let recognition = null;
+
+function startVoice() {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) return toast('🎙️ Voice not supported on this browser');
+
+  if (!recognition) {
+    recognition = new SpeechRec();
+    recognition.lang = 'en-IN';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onresult = (e) => {
+      const text = e.results[0][0].transcript;
+      document.getElementById('fName').value = text;
+      stopVoice();
+      toast('🎙️ Got: ' + text);
+    };
+
+    recognition.onerror = () => {
+      stopVoice();
+      toast('🎙️ Voice failed, try again');
+    };
+
+    recognition.onend = () => stopVoice();
+  }
+
+  document.getElementById('voiceBtn').classList.add('listening');
+  document.getElementById('voiceStatus').style.display = 'block';
+  recognition.start();
+}
+
+function stopVoice() {
+  document.getElementById('voiceBtn').classList.remove('listening');
+  document.getElementById('voiceStatus').style.display = 'none';
+  if (recognition) recognition.stop();
+}
+
+/* ═══════════════════════════════════════════
+   GOOGLE SHEETS SYNC
+   Uses a Google Apps Script Web App as bridge.
+   Requires user to deploy their own Apps Script.
+═══════════════════════════════════════════ */
+async function syncToSheets(txn, action) {
+  if (!APP.SCRIPT_URL) return; // No script URL configured
+
+  showLoading('Syncing to Sheets...');
+  try {
+    const payload = { action, sheetId: APP.sheetId, txn };
+    await fetch(APP.SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) {
+    console.warn('Sheets sync failed:', e);
+  }
+  hideLoading();
+}
+
+/* ═══════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════ */
+function formatDate(dateStr) {
+  if (!dateStr) return '-';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' });
+}
+
+function capitalise(str) {
+  return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+function toast(msg, duration = 2500) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), duration);
+}
+
+function showLoading(msg = 'Loading...') {
+  document.getElementById('loadingText').textContent = msg;
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+/* ═══════════════════════════════════════════
+   PWA SERVICE WORKER REGISTRATION
+═══════════════════════════════════════════ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+/* Start */
+init();
+</script>
+</body>
+</html>
