@@ -2076,9 +2076,7 @@ function addTxnToPerson() {
   selectType(type);
 
   setTimeout(() => {
-    const nameInput = document.getElementById('fName');
-    nameInput.value = name;
-    nameInput.disabled = true;
+    document.getElementById('fName').value = name;
   }, 50);
 }
 
