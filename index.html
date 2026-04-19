@@ -26,10 +26,12 @@
   --red-dim: rgba(255,77,109,0.12);
   --gold: #ffd166;
   --gold-dim: rgba(255,209,102,0.12);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
   --radius: 18px;
   --radius-sm: 12px;
- --font-head: 'Plus Jakarta Sans', sans-serif;
---font-body: 'Plus Jakarta Sans', sans-serif;;
+  --font-head: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -47,10 +49,8 @@ body {
 body::before {
   content: '';
   position: fixed;
-  top: -20%;
-  left: -10%;
-  width: 60%;
-  height: 60%;
+  top: -20%; left: -10%;
+  width: 60%; height: 60%;
   background: radial-gradient(ellipse, rgba(0,229,160,0.06) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
@@ -59,16 +59,13 @@ body::before {
 body::after {
   content: '';
   position: fixed;
-  bottom: -10%;
-  right: -10%;
-  width: 50%;
-  height: 50%;
+  bottom: -10%; right: -10%;
+  width: 50%; height: 50%;
   background: radial-gradient(ellipse, rgba(255,77,109,0.05) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* ─── SCREENS ─── */
 .screen {
   display: none;
   min-height: 100svh;
@@ -85,7 +82,6 @@ body::after {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── HEADER ─── */
 .header {
   display: flex;
   align-items: center;
@@ -122,14 +118,6 @@ body::after {
 
 .back-btn svg { width: 18px; height: 18px; }
 
-/* ─── HOME SCREEN ─── */
-.home-brand {
-  padding: 24px 20px 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 .brand-icon {
   width: 42px; height: 42px;
   background: linear-gradient(135deg, var(--green), #00bcd4);
@@ -147,7 +135,6 @@ body::after {
   -webkit-text-fill-color: transparent;
 }
 
-/* ─── SUMMARY CARD ─── */
 .summary-card {
   margin: 12px 16px;
   background: var(--surface);
@@ -203,7 +190,6 @@ body::after {
 .sum-box.r .sum-amount { color: var(--red); }
 .sum-box.b .sum-amount { color: var(--gold); }
 
-/* ─── ACTION CARDS ─── */
 .action-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -220,7 +206,6 @@ body::after {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  active-scale: 0.96;
 }
 
 .action-card:active { transform: scale(0.96); }
@@ -235,8 +220,6 @@ body::after {
   border-color: rgba(255,77,109,0.25);
 }
 
-.action-icon { font-size: 28px; }
-
 .action-title {
   font-family: var(--font-head);
   font-size: 15px;
@@ -248,7 +231,6 @@ body::after {
 
 .action-sub { font-size: 11px; color: var(--text2); }
 
-/* ─── SECTION HEADER ─── */
 .sec-header {
   display: flex;
   align-items: center;
@@ -265,7 +247,6 @@ body::after {
   color: var(--text2);
 }
 
-/* ─── PERSON CARD ─── */
 .person-card {
   display: flex;
   align-items: center;
@@ -311,17 +292,15 @@ body::after {
 .p-amount.g { color: var(--green); }
 .p-amount.r { color: var(--red); }
 
-/* ─── EMPTY STATE ─── */
 .empty {
   text-align: center;
-  padding: 50px 30px;
+  margin-top: 40px;
+  padding: 20px;
   color: var(--text2);
 }
 
-.empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
 .empty p { font-size: 14px; }
 
-/* ─── TYPE SCREEN ─── */
 .type-grid {
   display: flex;
   flex-direction: column;
@@ -366,7 +345,6 @@ body::after {
 .type-card.given h2 { color: var(--green); }
 .type-card.taken h2 { color: var(--red); }
 
-/* ─── FORM ─── */
 .form-body {
   padding: 20px;
   flex: 1;
@@ -463,7 +441,6 @@ body::after {
 .submit-btn.given { background: linear-gradient(135deg, var(--green), #00bcd4); color: #0a0f1e; }
 .submit-btn.taken { background: linear-gradient(135deg, var(--red), #ff8c42); color: white; }
 
-/* ─── TABS ─── */
 .tabs {
   display: flex;
   margin: 8px 16px;
@@ -486,15 +463,11 @@ body::after {
   color: var(--text2);
 }
 
-.tab.active {
-  background: var(--surface2);
-  color: var(--text);
-}
+.tab.active { background: var(--surface2); color: var(--text); }
 
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
-/* ─── TRANSACTION CARD ─── */
 .txn-card {
   margin: 6px 16px;
   background: var(--surface);
@@ -545,7 +518,6 @@ body::after {
   margin-bottom: 12px;
 }
 
-.txn-item { }
 .txn-item-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
 .txn-item-val {
   font-family: var(--font-head);
@@ -589,7 +561,89 @@ body::after {
 
 .close-btn:active { background: rgba(0,229,160,0.25); }
 
-/* ─── FAB ─── */
+/* ─── ANNIVERSARY BANNER (inside txn card) ─── */
+.anniversary-banner {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--amber-dim);
+  border: 1px solid rgba(245,158,11,0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--amber);
+  margin-bottom: 12px;
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+  50% { box-shadow: 0 0 12px 2px rgba(245,158,11,0.18); }
+}
+
+/* ─── REMINDERS SECTION (home screen) ─── */
+.reminders-section {
+  margin: 4px 16px 4px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid rgba(245,158,11,0.2);
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.reminders-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--amber), var(--gold));
+}
+
+.reminders-title {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--amber);
+  margin-bottom: 10px;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.reminder-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+.reminder-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: var(--amber-dim);
+  color: var(--amber);
+  border: 1px solid rgba(245,158,11,0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.reminder-info { flex: 1; min-width: 0; }
+.reminder-name {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.reminder-sub { font-size: 11px; color: var(--text2); margin-top: 1px; }
+
 .fab {
   position: fixed;
   bottom: calc(24px + var(--safe-bottom));
@@ -613,7 +667,6 @@ body::after {
 
 .fab:active { transform: scale(0.93); box-shadow: 0 4px 15px rgba(0,229,160,0.2); }
 
-/* ─── TOAST ─── */
 .toast {
   position: fixed;
   bottom: calc(100px + var(--safe-bottom));
@@ -638,7 +691,6 @@ body::after {
   transform: translateX(-50%) translateY(0);
 }
 
-/* ─── PERSON HEADER ─── */
 .person-header {
   display: flex;
   flex-direction: column;
@@ -669,15 +721,9 @@ body::after {
   text-transform: capitalize;
 }
 
-.person-net {
-  font-size: 13px;
-  color: var(--text2);
-}
+.person-net { font-size: 13px; color: var(--text2); }
 
-/* ─── SEARCH ─── */
-.search-wrap {
-  padding: 8px 16px;
-}
+.search-wrap { padding: 8px 16px; }
 
 .search-input {
   width: 100%;
@@ -690,16 +736,13 @@ body::after {
   font-size: 14px;
   outline: none;
   transition: border-color 0.2s;
-  position: relative;
   -webkit-appearance: none;
 }
 
 .search-input:focus { border-color: rgba(0,229,160,0.4); }
 .search-input::placeholder { color: var(--text2); }
 
-.search-wrap-inner {
-  position: relative;
-}
+.search-wrap-inner { position: relative; }
 
 .search-icon {
   position: absolute;
@@ -711,7 +754,6 @@ body::after {
   pointer-events: none;
 }
 
-/* ─── SYNC INDICATOR ─── */
 .sync-badge {
   display: inline-flex;
   align-items: center;
@@ -730,16 +772,13 @@ body::after {
   background: var(--green);
 }
 
-.sync-dot.syncing {
-  animation: pulse 1s infinite;
-}
+.sync-dot.syncing { animation: pulse 1s infinite; }
 
 @keyframes pulse {
   0%,100% { opacity: 1; }
   50% { opacity: 0.3; }
 }
 
-/* ─── SCROLLABLE ─── */
 .scroll-area {
   flex: 1;
   overflow-y: auto;
@@ -748,7 +787,6 @@ body::after {
 
 .scroll-area::-webkit-scrollbar { display: none; }
 
-/* ─── NET PER PERSON ─── */
 .net-chip {
   font-size: 12px;
   font-weight: 700;
@@ -762,36 +800,6 @@ body::after {
 .net-chip.pos { background: var(--green-dim); color: var(--green); }
 .net-chip.neg { background: var(--red-dim); color: var(--red); }
 
-/* ─── LIST FILTER TABS ─── */
-.filter-tabs {
-  display: flex;
-  gap: 8px;
-  padding: 8px 16px;
-  overflow-x: auto;
-}
-
-.filter-tabs::-webkit-scrollbar { display: none; }
-
-.ftab {
-  padding: 6px 14px;
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 600;
-  border: 1.5px solid var(--border);
-  color: var(--text2);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-  background: none;
-}
-
-.ftab.active {
-  background: var(--surface2);
-  color: var(--text);
-  border-color: rgba(255,255,255,0.2);
-}
-
-/* ─── SETUP SCREEN ─── */
 .setup-body {
   flex: 1;
   display: flex;
@@ -812,11 +820,7 @@ body::after {
   line-height: 1.2;
 }
 
-.setup-body p {
-  color: var(--text2);
-  font-size: 14px;
-  line-height: 1.6;
-}
+.setup-body p { color: var(--text2); font-size: 14px; line-height: 1.6; }
 
 .setup-btn {
   width: 100%;
@@ -862,19 +866,17 @@ body::after {
 .divider::before { left: 0; }
 .divider::after { right: 0; }
 
-/* ─── LOADING OVERLAY ─── */
 .loading-overlay {
   position: fixed;
   inset: 0;
   background: rgba(10,15,30,0.85);
   backdrop-filter: blur(8px);
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 999;
   gap: 16px;
-  display: none;
 }
 
 .loading-overlay.show { display: flex; }
@@ -891,7 +893,6 @@ body::after {
 
 .loading-text { color: var(--text2); font-size: 14px; }
 
-/* Settings icon in header */
 .icon-btn {
   width: 36px; height: 36px;
   background: var(--surface2);
@@ -902,8 +903,6 @@ body::after {
   font-size: 16px;
 }
 
-
-/* 🔥 Premium Toggle Switch */
 .switch {
   width: 42px;
   height: 22px;
@@ -926,15 +925,9 @@ body::after {
   transition: transform 0.3s ease;
 }
 
-.switch.on {
-  background: linear-gradient(135deg, var(--green), #00bcd4);
-}
+.switch.on { background: linear-gradient(135deg, var(--green), #00bcd4); }
+.switch.on::after { transform: translateX(20px); }
 
-.switch.on::after {
-  transform: translateX(20px);
-}
-
-/* ─── SHEETS CONNECT ─── */
 .sheets-info {
   margin: 0 16px;
   padding: 14px 16px;
@@ -948,12 +941,6 @@ body::after {
 
 .sheets-info strong { color: var(--gold); }
 
-/* responsive utility */
-.mt-auto { margin-top: auto; }
-.gap-8 { gap: 8px; }
-.flex-col { display: flex; flex-direction: column; }
-
-
 .action-icon {
   width: 96px;
   height: 96px;
@@ -961,75 +948,45 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-
   background: rgba(238, 232, 232, 0.95);
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-.icon-img {
-  width: 64px;
-  height: 64px;
-  object-fit: contain;
-  display: block;
-}
-
-.empty {
-  text-align: center;
-  margin-top: 40px;
-}
+.icon-img { width: 64px; height: 64px; object-fit: contain; display: block; }
 
 .empty-icon {
   width: 64px;
   height: 64px;
   margin: 0 auto 14px;
   border-radius: 16px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   background: #ffffff;
   border: 1px solid rgba(0,0,0,0.05);
 }
 
-.empty-img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-}
-
+.empty-img { width: 32px; height: 32px; object-fit: contain; }
 </style>
 </head>
 <body>
 
-<!-- LOADING OVERLAY -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <div class="loading-text" id="loadingText">Saving...</div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: SETUP (Google Sheets)
-═══════════════════════════════════════════ -->
+<!-- ═══ SETUP ═══ -->
 <div class="screen active" id="setupScreen">
   <div class="setup-body">
     <div class="setup-icon">📒</div>
     <h1>Your Personal Debt Notebook</h1>
     <p>Track money you gave & took. Connect Google Sheets to keep your data safe across devices — or start offline.</p>
-
-    <button class="setup-btn" onclick="connectSheets()">
-      📊 Connect Google Sheets
-    </button>
-
+    <button class="setup-btn" onclick="connectSheets()">📊 Connect Google Sheets</button>
     <div class="divider">or</div>
-
-    <button class="setup-btn secondary" onclick="startOffline()">
-      📱 Use Offline (Local Only)
-    </button>
-
+    <button class="setup-btn secondary" onclick="startOffline()">📱 Use Offline (Local Only)</button>
     <div id="sheetIdRow" style="width:100%;max-width:320px;display:none;">
       <p style="text-align:left;margin-bottom:6px;font-size:12px;color:var(--text2);">Google Sheet ID (from URL)</p>
       <input class="field-input" id="sheetIdInput" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" style="margin-bottom:10px;">
@@ -1038,11 +995,8 @@ body::after {
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: HOME
-═══════════════════════════════════════════ -->
+<!-- ═══ HOME ═══ -->
 <div class="screen" id="homeScreen">
-  <!-- Brand header -->
   <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0;">
     <div style="display:flex;align-items:center;gap:10px;">
       <div class="brand-icon">💰</div>
@@ -1057,7 +1011,6 @@ body::after {
     </div>
   </div>
 
-  <!-- Summary -->
   <div class="summary-card">
     <div class="sum-label" style="margin-bottom:12px;">Your Balance Overview</div>
     <div class="summary-row">
@@ -1076,49 +1029,37 @@ body::after {
     </div>
   </div>
 
-  <!-- Action cards -->
- <div class="action-grid">
+  <!-- Anniversary Reminders -->
+  <div id="remindersSection" style="display:none;"></div>
 
-  <div class="action-card given" onclick="openList('given')">
-    <div class="action-icon">
-      <img src="assets/piggy.png" class="icon-img">
+  <div class="action-grid">
+    <div class="action-card given" onclick="openList('given')">
+      <div class="action-icon"><img src="assets/piggy.png" class="icon-img"></div>
+      <div class="action-title">Given</div>
+      <div class="action-sub">Money you lent</div>
     </div>
-    <div class="action-title">Given</div>
-    <div class="action-sub">Money you lent</div>
+    <div class="action-card taken" onclick="openList('taken')">
+      <div class="action-icon"><img src="assets/hand-coin.png" class="icon-img"></div>
+      <div class="action-title">Taken</div>
+      <div class="action-sub">Money you owe</div>
+    </div>
   </div>
 
-  <div class="action-card taken" onclick="openList('taken')">
-    <div class="action-icon">
-      <img src="assets/hand-coin.png" class="icon-img">
-    </div>
-    <div class="action-title">Taken</div>
-    <div class="action-sub">Money you owe</div>
-  </div>
-
-</div>
-
-  <!-- Recent activity -->
   <div class="sec-header">
     <span class="sec-title">Recent Activity</span>
   </div>
 
   <div class="scroll-area" id="recentList">
-  <div class="empty">
-    
-    <div class="empty-icon">
-      <img src="assets/money-transfer.png" class="empty-img">
+    <div class="empty">
+      <div class="empty-icon"><img src="assets/money-transfer.png" class="empty-img"></div>
+      <p>No transactions yet.<br>Tap + to add your first entry.</p>
     </div>
-
-    <p>No transactions yet.<br>Tap + to add your first entry.</p>
   </div>
-</div>
 
   <button class="fab" onclick="go('typeScreen')">+</button>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: TYPE SELECTION
-═══════════════════════════════════════════ -->
+<!-- ═══ TYPE ═══ -->
 <div class="screen" id="typeScreen">
   <div class="header">
     <button class="back-btn" onclick="go('homeScreen')">
@@ -1128,35 +1069,25 @@ body::after {
     <span class="header-title">New Entry</span>
     <div style="width:60px;"></div>
   </div>
-
   <div style="padding:20px 20px 8px;">
     <p style="color:var(--text2);font-size:14px;">What are you recording?</p>
   </div>
-
   <div class="type-grid">
     <div class="type-card given" onclick="selectType('given')">
       <div class="type-emoji">💰</div>
-      <div class="type-text">
-        <h2>I Gave</h2>
-        <p>Someone owes you money</p>
-      </div>
+      <div class="type-text"><h2>I Gave</h2><p>Someone owes you money</p></div>
     </div>
     <div class="type-card taken" onclick="selectType('taken')">
       <div class="type-emoji">🤝</div>
-      <div class="type-text">
-        <h2>I Took</h2>
-        <p>You owe someone money</p>
-      </div>
+      <div class="type-text"><h2>I Took</h2><p>You owe someone money</p></div>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: FORM
-═══════════════════════════════════════════ -->
+<!-- ═══ FORM ═══ -->
 <div class="screen" id="formScreen">
   <div class="header">
-    <button class="back-btn" onclick="go('typeScreen')">
+    <button class="back-btn" onclick="cancelForm()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
       Back
     </button>
@@ -1167,7 +1098,6 @@ body::after {
   <div class="form-body">
     <div id="formTypeBadge" class="form-type-badge given">💰 Given</div>
 
-    <!-- Name -->
     <div class="field-group">
       <div class="field-label">Full Name</div>
       <div class="field-row">
@@ -1177,25 +1107,21 @@ body::after {
       <div id="voiceStatus" style="font-size:11px;color:var(--text2);display:none;">Listening... speak the name</div>
     </div>
 
-    <!-- Amount -->
     <div class="field-group">
       <div class="field-label">Amount (₹)</div>
-      <input class="field-input" id="fAmount" type="text" oninput="formatAmount(this)" placeholder="5,000">
+      <input class="field-input" id="fAmount" type="text" oninput="formatAmount(this)" placeholder="5,000" inputmode="decimal">
     </div>
 
-    <!-- Interest -->
     <div class="field-group">
       <div class="field-label">Interest % / Month (optional)</div>
-      <input class="field-input" id="fInterest" type="number" placeholder="2" inputmode="decimal" min="0" max="100">
+      <input class="field-input" id="fInterest" type="number" placeholder="2" inputmode="decimal" min="0" max="100" step="0.1">
     </div>
 
-    <!-- Date -->
     <div class="field-group">
       <div class="field-label">Date</div>
       <input class="field-input" id="fDate" type="date">
     </div>
 
-    <!-- Notes -->
     <div class="field-group">
       <div class="field-label">Notes (optional)</div>
       <input class="field-input" id="fNote" placeholder="What is this for?">
@@ -1205,9 +1131,7 @@ body::after {
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: LIST
-═══════════════════════════════════════════ -->
+<!-- ═══ LIST ═══ -->
 <div class="screen" id="listScreen">
   <div class="header">
     <button class="back-btn" onclick="go('homeScreen')">
@@ -1226,22 +1150,16 @@ body::after {
   </div>
 
   <div class="scroll-area" id="listContent">
-  <div class="empty">
-    
-    <div class="empty-icon">
-      <img src="assets/money-transfer.png" class="empty-img">
+    <div class="empty">
+      <div class="empty-icon"><img src="assets/money-transfer.png" class="empty-img"></div>
+      <p>No entries yet.</p>
     </div>
-
-    <p>No entries yet.</p>
   </div>
-</div>
 
   <button class="fab" onclick="addFromList()">+</button>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: PERSON DETAIL
-═══════════════════════════════════════════ -->
+<!-- ═══ DETAIL ═══ -->
 <div class="screen" id="detailScreen">
   <div class="header">
     <button class="back-btn" onclick="go('listScreen')">
@@ -1264,14 +1182,10 @@ body::after {
     <div class="tab-content" id="historyTab"></div>
   </div>
 
-   
-  <!-- 🔥 ADD THIS BUTTON HERE -->
   <button class="fab" onclick="addTxnToPerson()">+</button>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     SCREEN: SETTINGS
-═══════════════════════════════════════════ -->
+<!-- ═══ SETTINGS ═══ -->
 <div class="screen" id="settingsScreen">
   <div class="header">
     <button class="back-btn" onclick="go('homeScreen')">
@@ -1316,14 +1230,14 @@ body::after {
    STATE & STORAGE
 ═══════════════════════════════════════════ */
 let APP = {
-  
   data: [],
-  mode: 'offline', // 'offline' | 'sheets'
+  mode: 'offline',
   sheetId: '',
   currentType: '',
   selectedType: '',
   selectedPerson: '',
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbySEKnh5YnTOq3EAy7uYkIq41Sm2cuOUSuqcGMswjDigdPSFitvz_-mDK4HuMp6dvoL/exec', // Apps Script Web App URL - user sets this
+  editIndex: undefined,
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbySEKnh5YnTOq3EAy7uYkIq41Sm2cuOUSuqcGMswjDigdPSFitvz_-mDK4HuMp6dvoL/exec',
   viewMode: {},
 };
 
@@ -1331,48 +1245,52 @@ const LS = {
   save() { localStorage.setItem('debtbook_data', JSON.stringify(APP.data)); },
   load() {
     const raw = localStorage.getItem('debtbook_data');
-    if (raw) APP.data = JSON.parse(raw);
+    if (raw) {
+      try { APP.data = JSON.parse(raw); } catch(e) { APP.data = []; }
+    }
   },
   saveConfig() {
     localStorage.setItem('debtbook_config', JSON.stringify({
-      mode: APP.mode,
-      sheetId: APP.sheetId,
-      scriptUrl: APP.SCRIPT_URL
+      mode: APP.mode, sheetId: APP.sheetId, scriptUrl: APP.SCRIPT_URL
     }));
   },
   loadConfig() {
     const raw = localStorage.getItem('debtbook_config');
     if (raw) {
-      const c = JSON.parse(raw);
-      APP.mode = c.mode || 'offline';
-      APP.sheetId = c.sheetId || '';
-      APP.SCRIPT_URL = c.scriptUrl || '';
+      try {
+        const c = JSON.parse(raw);
+        APP.mode = c.mode || 'offline';
+        APP.sheetId = c.sheetId || '';
+        APP.SCRIPT_URL = c.scriptUrl || '';
+      } catch(e) {}
     }
   }
 };
 
 /* ═══════════════════════════════════════════
-   INIT
+   INIT — FIX: always LS.load() first
 ═══════════════════════════════════════════ */
 async function init() {
   LS.loadConfig();
+  LS.load(); // ✅ FIXED: was missing entirely
 
-  if (APP.mode === 'offline' && !localStorage.getItem('debtbook_setup_done')) {
+  if (!localStorage.getItem('debtbook_setup_done')) {
     go('setupScreen');
     return;
   }
 
   go('homeScreen');
 
-  // 🔥 ONLY SHEET
   if (APP.mode === 'sheets' && APP.sheetId) {
     await loadFromSheet();
   }
 
   updateDashboard();
   renderRecent();
+  renderAnniversaryReminders();
   updateSyncBadge();
 }
+
 /* ═══════════════════════════════════════════
    NAVIGATION
 ═══════════════════════════════════════════ */
@@ -1385,9 +1303,7 @@ function go(screenId) {
 /* ═══════════════════════════════════════════
    SETUP
 ═══════════════════════════════════════════ */
-function connectSheets() {
-  document.getElementById('sheetIdRow').style.display = 'block';
-}
+function connectSheets() { document.getElementById('sheetIdRow').style.display = 'block'; }
 
 function saveSheetId() {
   const id = document.getElementById('sheetIdInput').value.trim();
@@ -1409,16 +1325,13 @@ function finishSetup() {
   updateSyncBadge();
   go('homeScreen');
   updateDashboard();
+  renderRecent();
+  renderAnniversaryReminders();
 }
 
 /* ═══════════════════════════════════════════
    SETTINGS
 ═══════════════════════════════════════════ */
-function openSettings() {
-  document.getElementById('settingsSheetId').value = APP.sheetId;
-  go('settingsScreen');
-}
-
 function saveSettings() {
   const id = document.getElementById('settingsSheetId').value.trim();
   APP.sheetId = id;
@@ -1437,12 +1350,10 @@ function clearAll() {
   LS.save();
   updateDashboard();
   renderRecent();
+  renderAnniversaryReminders();
   toast('Cleared!');
 }
 
-/* ═══════════════════════════════════════════
-   SYNC BADGE
-═══════════════════════════════════════════ */
 function updateSyncBadge() {
   const dot = document.getElementById('syncDot');
   const label = document.getElementById('syncLabel');
@@ -1460,6 +1371,8 @@ function updateSyncBadge() {
 ═══════════════════════════════════════════ */
 function selectType(type) {
   APP.currentType = type;
+  APP.editIndex = undefined; // ✅ FIXED: clear editIndex on new entry
+
   const badge = document.getElementById('formTypeBadge');
   const btn = document.getElementById('submitBtn');
 
@@ -1473,6 +1386,7 @@ function selectType(type) {
     btn.className = 'submit-btn taken';
   }
 
+  btn.textContent = 'Save Transaction';
   document.getElementById('fDate').value = todayStr();
   document.getElementById('fName').value = '';
   document.getElementById('fAmount').value = '';
@@ -1481,98 +1395,95 @@ function selectType(type) {
   go('formScreen');
 }
 
+// ✅ FIXED: Back from form clears editIndex
+function cancelForm() {
+  APP.editIndex = undefined;
+  go('typeScreen');
+}
+
 function todayStr() {
   return new Date().toISOString().split('T')[0];
 }
 
 async function saveTxn() {
   const name = document.getElementById('fName').value.trim();
- const amount = parseFloat(
-  document.getElementById('fAmount').value.replace(/,/g, '')
-);
-  const interest = parseFloat(document.getElementById('fInterest').value) || 0;
+  const rawAmount = document.getElementById('fAmount').value.replace(/,/g, '');
+  const amount = parseFloat(rawAmount);
+  // ✅ FIXED: Clamp interest to valid range
+  const interestRaw = parseFloat(document.getElementById('fInterest').value);
+  const interest = isNaN(interestRaw) ? 0 : Math.min(Math.max(interestRaw, 0), 100);
   const date = document.getElementById('fDate').value || todayStr();
   const note = document.getElementById('fNote').value.trim();
 
   if (!name) return toast('⚠️ Please enter a name');
-  if (!amount || amount <= 0) return toast('⚠️ Enter a valid amount');
+  if (!amount || amount <= 0 || isNaN(amount)) return toast('⚠️ Enter a valid amount');
 
   if (APP.editIndex !== undefined) {
-    // 🔥 UPDATE EXISTING
     const txn = APP.data[APP.editIndex];
-
     txn.name = name.toLowerCase();
     txn.amount = amount;
     txn.interest = interest;
     txn.start = date;
     txn.note = note;
 
-    if (APP.mode === 'sheets' && APP.sheetId) {
-      await syncToSheets(txn, 'update');
-    }
+    if (APP.mode === 'sheets' && APP.sheetId) await syncToSheets(txn, 'update');
 
     APP.editIndex = undefined;
     toast('✏️ Updated successfully!');
-
   } else {
-    // 🔥 NEW ENTRY
     const txn = {
       id: Date.now().toString(),
       name: name.toLowerCase(),
-      amount,
-      interest,
+      amount, interest,
       type: APP.currentType,
-      start: date,
-      note,
+      start: date, note,
       status: 'active',
       createdAt: new Date().toISOString()
     };
 
     APP.data.push(txn);
 
-    if (APP.mode === 'sheets' && APP.sheetId) {
-      await syncToSheets(txn, 'append');
-    }
+    if (APP.mode === 'sheets' && APP.sheetId) await syncToSheets(txn, 'append');
 
     toast('✅ Transaction saved!');
   }
 
-  // 🔥 COMMON PART (VERY IMPORTANT)
   LS.save();
   updateDashboard();
   renderRecent();
+  renderAnniversaryReminders();
   go('homeScreen');
-
-  // reset button text
   document.getElementById('submitBtn').textContent = 'Save Transaction';
 }
 
 /* ═══════════════════════════════════════════
-   CALCULATION
+   CALCULATION — FIX: use closedAt for closed txns
 ═══════════════════════════════════════════ */
 function calcTxn(txn) {
-  const days = Math.max(0, Math.floor((Date.now() - new Date(txn.start)) / 86400000));
+  // ✅ FIXED: closed transactions use their close date, not today
+  const endDate = (txn.status === 'closed' && txn.closedAt)
+    ? new Date(txn.closedAt)
+    : new Date();
 
-  const useCompound = APP.viewMode[txn.id] ?? false;
-
+  const days = Math.max(0, Math.floor((endDate - new Date(txn.start)) / 86400000));
   const months = days / 30;
+  const useCompound = APP.viewMode[txn.id] ?? false;
 
   let total, interestAmt;
 
   if (useCompound) {
-    // ✅ MONTHLY COMPOUND (CORRECT)
     total = txn.amount * Math.pow(1 + txn.interest / 100, months);
     interestAmt = total - txn.amount;
   } else {
-    // ✅ SIMPLE (MONTHLY BASE)
     interestAmt = (txn.amount * txn.interest * months) / 100;
     total = txn.amount + interestAmt;
   }
 
   return { days, interestAmt, total };
 }
+
 /* ═══════════════════════════════════════════
-   DASHBOARD
+   DASHBOARD — FIX: show +/- prefix on balance
 ═══════════════════════════════════════════ */
 function updateDashboard() {
   let get = 0, pay = 0;
@@ -1587,14 +1498,14 @@ function updateDashboard() {
   document.getElementById('sumPay').textContent = fmt(pay);
   const bal = get - pay;
   const balEl = document.getElementById('sumBal');
-  balEl.textContent = fmt(Math.abs(bal));
+  // ✅ FIXED: show sign so user knows direction
+  balEl.textContent = (bal >= 0 ? '+' : '-') + fmt(Math.abs(bal));
   balEl.style.color = bal >= 0 ? 'var(--green)' : 'var(--red)';
 }
 
 function fmt(n) {
   return '₹' + Number(n).toLocaleString('en-IN', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    minimumFractionDigits: 2, maximumFractionDigits: 2
   });
 }
 
@@ -1603,34 +1514,113 @@ function fmtFull(n) {
 }
 
 /* ═══════════════════════════════════════════
+   ANNIVERSARY REMINDERS — NEW FEATURE
+   Detects 1yr / 2yr / 3yr milestones
+   Shows within a ±7 day window
+═══════════════════════════════════════════ */
+function getAnniversaryInfo(txn) {
+  if (txn.status !== 'active') return null;
+
+  const start = new Date(txn.start);
+  const now = new Date();
+  const daysSinceStart = Math.floor((now - start) / 86400000);
+  const WINDOW = 7; // days either side
+
+  for (const yr of [1, 2, 3]) {
+    const targetDays = yr * 365;
+    const diff = daysSinceStart - targetDays;
+
+    if (diff >= 0 && diff <= WINDOW) {
+      return { year: yr, daysAgo: diff, type: 'hit' };
+    }
+
+    if (diff < 0 && diff >= -WINDOW) {
+      return { year: yr, daysUntil: Math.abs(diff), type: 'upcoming' };
+    }
+  }
+
+  return null;
+}
+
+function renderAnniversaryReminders() {
+  const section = document.getElementById('remindersSection');
+  const reminders = [];
+
+  APP.data.forEach(d => {
+    const info = getAnniversaryInfo(d);
+    if (info) reminders.push({ txn: d, info });
+  });
+
+  if (!reminders.length) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+
+  const items = reminders.map(({ txn, info }) => {
+    const typeLabel = txn.type === 'given' ? 'Lent to' : 'Borrowed from';
+    const amtStr = fmt(calcTxn(txn).total);
+    let badgeText;
+
+    if (info.type === 'hit') {
+      badgeText = info.daysAgo === 0
+        ? `🎯 ${info.year}yr Today!`
+        : `🔔 ${info.year}yr · ${info.daysAgo}d ago`;
+    } else {
+      badgeText = `⏰ ${info.year}yr in ${info.daysUntil}d`;
+    }
+
+    return `
+      <div class="reminder-item" onclick="quickOpenPerson('${txn.name}','${txn.type}')" style="cursor:pointer;">
+        <div class="reminder-badge">${badgeText}</div>
+        <div class="reminder-info">
+          <div class="reminder-name">${capitalise(txn.name)}</div>
+          <div class="reminder-sub">${typeLabel} · ${amtStr}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  section.innerHTML = `
+    <div class="reminders-section">
+      <div class="reminders-title">🔔 Anniversary Reminders</div>
+      ${items}
+    </div>`;
+}
+
+/* ═══════════════════════════════════════════
    RECENT ACTIVITY
 ═══════════════════════════════════════════ */
 function renderRecent() {
   const el = document.getElementById('recentList');
-  const sorted = [...APP.data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 8);
+  const sorted = [...APP.data]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 8);
 
- if (!sorted.length) {
-  el.innerHTML = `
-    <div class="empty">
-      <div class="empty-icon">
-        <img src="assets/money-transfer.png" class="empty-img">
-      </div>
-      <p>No transactions yet.<br>Tap + to add your first entry.</p>
-    </div>
-  `;
-  return;
-}
+  if (!sorted.length) {
+    el.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon"><img src="assets/money-transfer.png" class="empty-img"></div>
+        <p>No transactions yet.<br>Tap + to add your first entry.</p>
+      </div>`;
+    return;
+  }
 
   el.innerHTML = sorted.map(d => {
     const { total } = calcTxn(d);
     const color = d.type === 'given' ? 'g' : 'r';
     const initials = d.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    const statusTag = d.status === 'closed' ? '<span style="font-size:10px;color:var(--text2);"> · Closed</span>' : '';
+    const statusTag = d.status === 'closed'
+      ? '<span style="font-size:10px;color:var(--text2);"> · Closed</span>' : '';
+    const anniv = getAnniversaryInfo(d);
+    const annivTag = anniv
+      ? `<span style="font-size:10px;color:var(--amber);margin-left:4px;">🔔 ${anniv.year}yr</span>` : '';
+
     return `
       <div class="person-card" onclick="quickOpenPerson('${d.name}', '${d.type}')">
         <div class="avatar ${color}">${initials}</div>
         <div class="p-info">
-          <div class="p-name">${d.name}${statusTag}</div>
+          <div class="p-name">${d.name}${statusTag}${annivTag}</div>
           <div class="p-sub">${d.type === 'given' ? 'You lent' : 'You owe'} · ${formatDate(d.start)}</div>
         </div>
         <div class="p-amount ${color}">${fmt(total)}</div>
@@ -1654,29 +1644,20 @@ function openList(type) {
 
 function renderList(type, filter = '') {
   const el = document.getElementById('listContent');
-
   const grouped = {};
 
   APP.data.forEach(d => {
     if (d.type !== type) return;
-
     const key = d.name;
+    if (!grouped[key]) grouped[key] = { total: 0, count: 0, latest: d.start, hasAnniversary: false };
 
-    if (!grouped[key]) {
-      grouped[key] = { total: 0, count: 0, latest: d.start };
-    }
-
-    // only active adds to total
     if (d.status === 'active') {
       const { total } = calcTxn(d);
       grouped[key].total += total;
+      if (getAnniversaryInfo(d)) grouped[key].hasAnniversary = true;
     }
-
     grouped[key].count++;
-
-    if (d.start > grouped[key].latest) {
-      grouped[key].latest = d.start;
-    }
+    if (d.start > grouped[key].latest) grouped[key].latest = d.start;
   });
 
   const names = Object.keys(grouped)
@@ -1684,15 +1665,13 @@ function renderList(type, filter = '') {
     .sort();
 
   if (!names.length) {
-  el.innerHTML = `
-    <div class="empty">
-      <div class="empty-icon">
-        <img src="assets/${type === 'given' ? 'piggy.png' : 'hand-coin.png'}" class="empty-img">
-      </div>
-      <p>No ${type} entries yet.</p>
-    </div>`;
-  return;
-}
+    el.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon"><img src="assets/${type === 'given' ? 'piggy.png' : 'hand-coin.png'}" class="empty-img"></div>
+        <p>No ${type} entries yet.</p>
+      </div>`;
+    return;
+  }
 
   const color = type === 'given' ? 'g' : 'r';
 
@@ -1700,18 +1679,16 @@ function renderList(type, filter = '') {
     const g = grouped[name];
     const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
     const isSettled = g.total === 0;
+    const annivTag = g.hasAnniversary ? `<span style="font-size:10px;color:var(--amber);margin-left:4px;">🔔</span>` : '';
 
     return `
       <div class="person-card" onclick="openPerson('${name}')">
         <div class="avatar ${color}">${initials}</div>
         <div class="p-info">
-          <div class="p-name">${name}</div>
-          <div class="p-sub">
-            ${g.count} transaction${g.count > 1 ? 's' : ''} · Last: ${formatDate(g.latest)}
-          </div>
+          <div class="p-name">${name}${annivTag}</div>
+          <div class="p-sub">${g.count} transaction${g.count > 1 ? 's' : ''} · Last: ${formatDate(g.latest)}</div>
         </div>
-        <div class="p-amount ${isSettled ? '' : color}" 
-             style="${isSettled ? 'color:var(--text2)' : ''}">
+        <div class="p-amount ${isSettled ? '' : color}" style="${isSettled ? 'color:var(--text2)' : ''}">
           ${isSettled ? 'Settled' : fmt(g.total)}
         </div>
       </div>`;
@@ -1719,15 +1696,15 @@ function renderList(type, filter = '') {
 }
 
 function filterList() {
-  const q = document.getElementById('searchInput').value;
-  renderList(currentListType, q);
+  renderList(currentListType, document.getElementById('searchInput').value);
 }
 
 /* ═══════════════════════════════════════════
-   PERSON DETAIL
+   PERSON DETAIL — FIX: type always from currentListType
 ═══════════════════════════════════════════ */
 function openPerson(name) {
   APP.selectedPerson = name;
+  APP.selectedType = currentListType; // ✅ FIXED: was stale before
   renderPersonDetail(name, APP.selectedType);
   go('detailScreen');
 }
@@ -1741,11 +1718,9 @@ function quickOpenPerson(name, type) {
 
 function renderPersonDetail(name, type) {
   document.getElementById('detailName').textContent = capitalise(name);
-
   const color = type === 'given' ? 'g' : 'r';
   const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 
-  // Net for this person
   let activeTotal = 0;
   APP.data.forEach(d => {
     if (d.name !== name || d.type !== type || d.status !== 'active') return;
@@ -1777,89 +1752,64 @@ function renderTxnCards(name, type, status, containerId) {
   el.innerHTML = txns.map(d => {
     const { days, interestAmt, total } = calcTxn(d);
     const closedClass = status === 'closed' ? 'closed' : (type === 'taken' ? 'taken' : '');
-    const actionBtns = status === 'active'
-  ? `
-    <div style="display:flex;gap:8px;margin-top:12px;">
-      <button class="close-btn" style="flex:1;" onclick="closeTxn(${d.idx})">
-        ✅ Settle
-      </button>
-      <button class="close-btn" style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);" onclick="editTxn(${d.idx})">
-        ✏️ Edit
-      </button>
-    </div>
-  `
-  : '';
- return `
-<div class="txn-card ${closedClass}">
 
-  <!-- HEADER -->
-  <div class="txn-header" style="align-items:center;justify-content:space-between;">
-    
-    <!-- DATE -->
-    <div class="txn-date">📅 ${formatDate(d.start)}</div>
+    // Anniversary banner inside transaction card
+    const anniv = status === 'active' ? getAnniversaryInfo(d) : null;
+    const annivBanner = anniv ? `
+      <div class="anniversary-banner">
+        <span style="font-size:16px;">🔔</span>
+        <span>${anniv.type === 'hit'
+          ? (anniv.daysAgo === 0
+              ? `${anniv.year}-Year Anniversary Today!`
+              : `${anniv.year}-Year Anniversary · ${anniv.daysAgo} day${anniv.daysAgo !== 1 ? 's' : ''} ago`)
+          : `${anniv.year}-Year Anniversary in ${anniv.daysUntil} day${anniv.daysUntil !== 1 ? 's' : ''}`}
+        </span>
+      </div>` : '';
 
-    <!-- RIGHT SIDE -->
-    <div style="display:flex;align-items:center;gap:10px;">
-      
-      <!-- TOGGLE -->
-      <div class="switch ${APP.viewMode[d.id] ? 'on' : ''}" 
-           onclick="toggleViewMode('${d.id}')"></div>
+    const actionBtns = status === 'active' ? `
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="close-btn" style="flex:1;" onclick="closeTxn(${d.idx})">✅ Settle</button>
+        <button class="close-btn" style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);" onclick="editTxn(${d.idx})">✏️ Edit</button>
+      </div>` : '';
 
-      <!-- TYPE TEXT -->
-      <span style="
-        font-size:11px;
-        min-width:70px;
-        color:${APP.viewMode[d.id] ? 'var(--green)' : 'var(--text2)'};
-        font-weight:600;
-      ">
-        ${APP.viewMode[d.id] ? 'Compound' : 'Simple'}
-      </span>
-
-      <!-- STATUS -->
-      <div class="txn-status ${status}">${status}</div>
-
-    </div>
-  </div>
-
-  <!-- GRID -->
-  <div class="txn-grid">
-
-    <div class="txn-item">
-      <div class="txn-item-label">Principal</div>
-      <div class="txn-item-val">${fmtFull(d.amount)}</div>
-    </div>
-
-    <div class="txn-item">
-      <div class="txn-item-label">Interest</div>
-      <div class="txn-item-val">${d.interest}%</div>
-    </div>
-
-    <div class="txn-item">
-      <div class="txn-item-label">Days</div>
-      <div class="txn-item-val">${days}</div>
-    </div>
-
-    <div class="txn-item">
-      <div class="txn-item-label">Interest Earned</div>
-      <div class="txn-item-val">${fmtFull(interestAmt)}</div>
-    </div>
-
-  </div>
-
-  ${d.note ? `
-    <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">
-      📝 ${d.note}
-    </div>` : ''}
-
-  <!-- TOTAL -->
-  <div class="txn-total-row" style="display:flex;justify-content:space-between;align-items:center;">
-    <div class="txn-total-label">Total Due</div>
-    <div class="txn-total-val">${fmtFull(total)}</div>
-  </div>
-
-  ${actionBtns}
-
-</div>`;
+    return `
+      <div class="txn-card ${closedClass}">
+        ${annivBanner}
+        <div class="txn-header" style="align-items:center;justify-content:space-between;">
+          <div class="txn-date">📅 ${formatDate(d.start)}</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="switch ${APP.viewMode[d.id] ? 'on' : ''}" onclick="toggleViewMode('${d.id}')"></div>
+            <span style="font-size:11px;min-width:70px;color:${APP.viewMode[d.id] ? 'var(--green)' : 'var(--text2)'};font-weight:600;">
+              ${APP.viewMode[d.id] ? 'Compound' : 'Simple'}
+            </span>
+            <div class="txn-status ${status}">${status}</div>
+          </div>
+        </div>
+        <div class="txn-grid">
+          <div class="txn-item">
+            <div class="txn-item-label">Principal</div>
+            <div class="txn-item-val">${fmtFull(d.amount)}</div>
+          </div>
+          <div class="txn-item">
+            <div class="txn-item-label">Interest</div>
+            <div class="txn-item-val">${d.interest}%/mo</div>
+          </div>
+          <div class="txn-item">
+            <div class="txn-item-label">Days</div>
+            <div class="txn-item-val">${days}</div>
+          </div>
+          <div class="txn-item">
+            <div class="txn-item-label">Interest Earned</div>
+            <div class="txn-item-val">${fmtFull(interestAmt)}</div>
+          </div>
+        </div>
+        ${d.note ? `<div style="font-size:12px;color:var(--text2);margin-bottom:10px;">📝 ${d.note}</div>` : ''}
+        <div class="txn-total-row">
+          <div class="txn-total-label">Total Due</div>
+          <div class="txn-total-val">${fmtFull(total)}</div>
+        </div>
+        ${actionBtns}
+      </div>`;
   }).join('');
 }
 
@@ -1869,19 +1819,15 @@ function closeTxn(idx) {
   APP.data[idx].closedAt = new Date().toISOString();
   LS.save();
 
-  if (APP.mode === 'sheets' && APP.sheetId) {
-    syncToSheets(APP.data[idx], 'update');
-  }
+  if (APP.mode === 'sheets' && APP.sheetId) syncToSheets(APP.data[idx], 'update');
 
   updateDashboard();
   renderPersonDetail(APP.selectedPerson, APP.selectedType);
   renderRecent();
+  renderAnniversaryReminders();
   toast('✅ Marked as settled!');
 }
 
-/* ═══════════════════════════════════════════
-   TABS
-═══════════════════════════════════════════ */
 function showDetailTab(tab) {
   document.getElementById('currentTab').classList.toggle('active', tab === 'current');
   document.getElementById('historyTab').classList.toggle('active', tab === 'history');
@@ -1903,19 +1849,12 @@ function startVoice() {
     recognition.lang = 'en-IN';
     recognition.continuous = false;
     recognition.interimResults = false;
-
     recognition.onresult = (e) => {
-      const text = e.results[0][0].transcript;
-      document.getElementById('fName').value = text;
+      document.getElementById('fName').value = e.results[0][0].transcript;
       stopVoice();
-      toast('🎙️ Got: ' + text);
+      toast('🎙️ Got: ' + e.results[0][0].transcript);
     };
-
-    recognition.onerror = () => {
-      stopVoice();
-      toast('🎙️ Voice failed, try again');
-    };
-
+    recognition.onerror = () => { stopVoice(); toast('🎙️ Voice failed, try again'); };
     recognition.onend = () => stopVoice();
   }
 
@@ -1931,40 +1870,53 @@ function stopVoice() {
 }
 
 /* ═══════════════════════════════════════════
-   GOOGLE SHEETS SYNC
-   Uses a Google Apps Script Web App as bridge.
-   Requires user to deploy their own Apps Script.
+   SHEETS SYNC
 ═══════════════════════════════════════════ */
 async function syncToSheets(txn, action) {
   if (!APP.SCRIPT_URL) return;
-
   try {
     await fetch(APP.SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",   // ✅ REQUIRED
-
-      // ❌ NO HEADERS
-
-      body: JSON.stringify({
-        action,
-        sheetId: APP.sheetId,
-        txn
-      })
+      method: "POST", mode: "no-cors",
+      body: JSON.stringify({ action, sheetId: APP.sheetId, txn })
     });
+  } catch (e) { console.error("❌ Sync error:", e); }
+}
 
-    console.log("✅ Sent");
+async function loadFromSheet() {
+  try {
+    if (!APP.sheetId) return;
+    const res = await fetch(`/api/getData?sheetId=${APP.sheetId}&t=${Date.now()}`);
+    const data = await res.json();
 
+    // ✅ FIXED: only overwrite if sheet returns actual data; don't wipe local on failure
+    if (Array.isArray(data) && data.length > 0) {
+      APP.data = data;
+      LS.save();
+    } else {
+      console.warn('Sheet returned empty, keeping local data');
+    }
   } catch (e) {
-    console.error("❌ Error:", e);
+    console.error("❌ Load from sheet failed, using local data:", e);
+    // ✅ FIXED: don't set APP.data = [] here — local data is already loaded
   }
 }
+
 /* ═══════════════════════════════════════════
    UTILS
 ═══════════════════════════════════════════ */
 function formatDate(dateStr) {
   if (!dateStr) return '-';
+  return new Date(dateStr).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' });
+}
+
+// ✅ FIXED: Handles timezone offset so date doesn't shift by 1 day
+function formatDateForInput(dateStr) {
+  if (!dateStr) return '';
   const d = new Date(dateStr);
-  return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' });
+  if (isNaN(d)) return '';
+  const offset = d.getTimezoneOffset();
+  const adjusted = new Date(d.getTime() - offset * 60000);
+  return adjusted.toISOString().split('T')[0];
 }
 
 function capitalise(str) {
@@ -1986,62 +1938,25 @@ function showLoading(msg = 'Loading...') {
 function hideLoading() {
   document.getElementById('loadingOverlay').classList.remove('show');
 }
-async function loadFromSheet() {
-  try {
-    if (!APP.sheetId) return;
 
-    console.log("📡 Fetching from sheet...");
+function addFromList() { selectType(APP.selectedType); }
 
-    const res = await fetch(
-      `/api/getData?sheetId=${APP.sheetId}&t=${Date.now()}`
-    );
-
-    const data = await res.json();
-
-    console.log("📥 Sheet data:", data);
-
-    // ✅ ALWAYS TRUST SHEET
-    if (Array.isArray(data)) {
-      APP.data = data;
-
-      // optional: keep backup
-      localStorage.setItem('debtbook_data', JSON.stringify(data));
-    }
-
-  } catch (e) {
-    console.error("❌ Load failed:", e);
-    APP.data = []; // fallback
-  }
-}
-
-
-function addFromList() {
-  // use already selected list type
-  selectType(APP.selectedType);
-}
 function toggleViewMode(id) {
   APP.viewMode[id] = !APP.viewMode[id];
   renderPersonDetail(APP.selectedPerson, APP.selectedType);
 }
 
-
-
 function editTxn(idx) {
   const txn = APP.data[idx];
-
-  // store editing index
   APP.editIndex = idx;
 
-  // fill form
   document.getElementById('fName').value = txn.name;
-  document.getElementById('fAmount').value = txn.amount;
+  document.getElementById('fAmount').value = txn.amount.toLocaleString('en-IN');
   document.getElementById('fInterest').value = txn.interest;
- document.getElementById('fDate').value = formatDateForInput(txn.start);
+  document.getElementById('fDate').value = formatDateForInput(txn.start);
   document.getElementById('fNote').value = txn.note || '';
 
-  // set type
   APP.currentType = txn.type;
-
   const badge = document.getElementById('formTypeBadge');
   const btn = document.getElementById('submitBtn');
 
@@ -2055,52 +1970,59 @@ function editTxn(idx) {
     btn.className = 'submit-btn taken';
   }
 
-  // change button text
   btn.textContent = 'Update Transaction';
-
   go('formScreen');
 }
-function formatDateForInput(dateStr) {
-  const d = new Date(dateStr);
 
-  if (isNaN(d)) return '';
-
-  return d.toISOString().split('T')[0]; // YYYY-MM-DD
-}
-
-
+// ✅ FIXED: No more setTimeout hack — set fName before navigating
 function addTxnToPerson() {
   const name = APP.selectedPerson;
   const type = APP.selectedType;
-
   APP.currentType = type;
+  APP.editIndex = undefined;
 
-  selectType(type);
+  const badge = document.getElementById('formTypeBadge');
+  const btn = document.getElementById('submitBtn');
 
-  setTimeout(() => {
-    document.getElementById('fName').value = name;
-  }, 50);
+  if (type === 'given') {
+    badge.className = 'form-type-badge given';
+    badge.textContent = '💰 Given – You Lent Money';
+    btn.className = 'submit-btn given';
+  } else {
+    badge.className = 'form-type-badge taken';
+    badge.textContent = '🤝 Taken – You Borrowed Money';
+    btn.className = 'submit-btn taken';
+  }
+
+  btn.textContent = 'Save Transaction';
+  document.getElementById('fDate').value = todayStr();
+  document.getElementById('fName').value = name; // ✅ Set before navigating
+  document.getElementById('fAmount').value = '';
+  document.getElementById('fInterest').value = '';
+  document.getElementById('fNote').value = '';
+  go('formScreen');
 }
 
-  function formatAmount(input) {
-  let value = input.value.replace(/,/g, '');
+// ✅ FIXED: Handles decimals gracefully, doesn't corrupt input mid-type
+function formatAmount(input) {
+  let raw = input.value.replace(/,/g, '');
+  if (raw.endsWith('.') || raw === '') return; // let user finish typing
 
-  if (!value) return;
+  const num = parseFloat(raw);
+  if (isNaN(num)) return;
 
-  if (isNaN(value)) return;
-
-  input.value = Number(value).toLocaleString('en-IN');
+  const decimalPart = raw.includes('.') ? raw.split('.')[1] : null;
+  const intPart = Math.floor(Math.abs(num)).toLocaleString('en-IN');
+  input.value = decimalPart !== null ? intPart + '.' + decimalPart : intPart;
 }
-  /* ═══════════════════════════════════════════
-   PWA SERVICE WORKER REGISTRATION
-═══════════════════════════════════════════ */
+
+/* PWA */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   });
 }
 
-/* Start */
 init();
 </script>
 </body>
