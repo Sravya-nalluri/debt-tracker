@@ -1252,23 +1252,28 @@ const LS = {
 /* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
-function init() {
+async function init() {
   LS.loadConfig();
-  LS.load();
 
   if (APP.mode === 'offline' && !localStorage.getItem('debtbook_setup_done')) {
     go('setupScreen');
-  } else {
-    go('homeScreen');
-    updateDashboard();
-    renderRecent();
-    updateSyncBadge();
+    return;
   }
 
-  // ✅ CALL AFTER UI LOADS
+  go('homeScreen');
+
+  // ✅ FIRST: try loading from sheet
   if (APP.mode === 'sheets' && APP.sheetId) {
-    setTimeout(loadFromSheet, 1000);
+    await loadFromSheet();
+  } else {
+    // fallback if no sheet
+    LS.load();
   }
+
+  // ✅ THEN render UI
+  updateDashboard();
+  renderRecent();
+  updateSyncBadge();
 }
 
 /* ═══════════════════════════════════════════
@@ -1761,27 +1766,34 @@ function showLoading(msg = 'Loading...') {
 function hideLoading() {
   document.getElementById('loadingOverlay').classList.remove('show');
 }
-
 async function loadFromSheet() {
   try {
     if (!APP.sheetId) return;
 
+    console.log("⏳ Loading from sheet...");
+
     const res = await fetch(`/api/getData?sheetId=${APP.sheetId}`);
     const data = await res.json();
 
-    console.log("Sheet data:", data);
+    console.log("✅ Sheet data:", data);
 
-    // ✅ ALWAYS SYNC (even if empty)
     if (Array.isArray(data)) {
       APP.data = data;
-      localStorage.setItem('debtbook_data', JSON.stringify(data));
 
-      updateDashboard();
-      renderRecent();
+      localStorage.setItem(
+        'debtbook_data',
+        JSON.stringify(data)
+      );
+
+      // 🔥 FORCE CLEAN UI RENDER
+      requestAnimationFrame(() => {
+        updateDashboard();
+        renderRecent();
+      });
     }
 
   } catch (e) {
-    console.error("Load failed:", e);
+    console.error("❌ Load failed:", e);
   }
 }
 /* ═══════════════════════════════════════════
