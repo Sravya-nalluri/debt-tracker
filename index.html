@@ -952,6 +952,52 @@ body::after {
 .mt-auto { margin-top: auto; }
 .gap-8 { gap: 8px; }
 .flex-col { display: flex; flex-direction: column; }
+
+
+.action-icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(238, 232, 232, 0.95);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.icon-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  display: block;
+}
+
+.empty {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.empty-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
 </style>
 </head>
 <body>
@@ -1031,18 +1077,25 @@ body::after {
   </div>
 
   <!-- Action cards -->
-  <div class="action-grid">
-    <div class="action-card given" onclick="openList('given')">
-      <div class="action-icon">💚</div>
-      <div class="action-title">Given</div>
-      <div class="action-sub">Money you lent</div>
+ <div class="action-grid">
+
+  <div class="action-card given" onclick="openList('given')">
+    <div class="action-icon">
+      <img src="assets/piggy.png" class="icon-img">
     </div>
-    <div class="action-card taken" onclick="openList('taken')">
-      <div class="action-icon">❤️</div>
-      <div class="action-title">Taken</div>
-      <div class="action-sub">Money you owe</div>
-    </div>
+    <div class="action-title">Given</div>
+    <div class="action-sub">Money you lent</div>
   </div>
+
+  <div class="action-card taken" onclick="openList('taken')">
+    <div class="action-icon">
+      <img src="assets/hand-coin.png" class="icon-img">
+    </div>
+    <div class="action-title">Taken</div>
+    <div class="action-sub">Money you owe</div>
+  </div>
+
+</div>
 
   <!-- Recent activity -->
   <div class="sec-header">
@@ -1050,11 +1103,15 @@ body::after {
   </div>
 
   <div class="scroll-area" id="recentList">
-    <div class="empty">
-      <div class="empty-icon">🌱</div>
-      <p>No transactions yet.<br>Tap + to add your first entry.</p>
+  <div class="empty">
+    
+    <div class="empty-icon">
+      <img src="assets/money-transfer.png" class="empty-img">
     </div>
+
+    <p>No transactions yet.<br>Tap + to add your first entry.</p>
   </div>
+</div>
 
   <button class="fab" onclick="go('typeScreen')">+</button>
 </div>
@@ -1169,8 +1226,15 @@ body::after {
   </div>
 
   <div class="scroll-area" id="listContent">
-    <div class="empty"><div class="empty-icon">🌱</div><p>No entries yet.</p></div>
+  <div class="empty">
+    
+    <div class="empty-icon">
+      <img src="assets/money-transfer.png" class="empty-img">
+    </div>
+
+    <p>No entries yet.</p>
   </div>
+</div>
 
   <button class="fab" onclick="addFromList()">+</button>
 </div>
@@ -1539,10 +1603,17 @@ function renderRecent() {
   const el = document.getElementById('recentList');
   const sorted = [...APP.data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 8);
 
-  if (!sorted.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">🌱</div><p>No transactions yet.<br>Tap + to add your first entry.</p></div>`;
-    return;
-  }
+ if (!sorted.length) {
+  el.innerHTML = `
+    <div class="empty">
+      <div class="empty-icon">
+        <img src="assets/money-transfer.png" class="empty-img">
+      </div>
+      <p>No transactions yet.<br>Tap + to add your first entry.</p>
+    </div>
+  `;
+  return;
+}
 
   el.innerHTML = sorted.map(d => {
     const { total } = calcTxn(d);
@@ -1607,13 +1678,15 @@ function renderList(type, filter = '') {
     .sort();
 
   if (!names.length) {
-    el.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">${type === 'given' ? '💚' : '❤️'}</div>
-        <p>No ${type} entries yet.</p>
-      </div>`;
-    return;
-  }
+  el.innerHTML = `
+    <div class="empty">
+      <div class="empty-icon">
+        <img src="assets/${type === 'given' ? 'piggy.png' : 'hand-coin.png'}" class="empty-img">
+      </div>
+      <p>No ${type} entries yet.</p>
+    </div>`;
+  return;
+}
 
   const color = type === 'given' ? 'g' : 'r';
 
