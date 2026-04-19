@@ -902,6 +902,38 @@ body::after {
   font-size: 16px;
 }
 
+
+/* 🔥 Premium Toggle Switch */
+.switch {
+  width: 42px;
+  height: 22px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.15);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s ease;
+}
+
+.switch.on {
+  background: linear-gradient(135deg, var(--green), #00bcd4);
+}
+
+.switch.on::after {
+  transform: translateX(20px);
+}
+
 /* ─── SHEETS CONNECT ─── */
 .sheets-info {
   margin: 0 16px;
@@ -1140,7 +1172,7 @@ body::after {
     <div class="empty"><div class="empty-icon">🌱</div><p>No entries yet.</p></div>
   </div>
 
-  <button class="fab" onclick="go('typeScreen')">+</button>
+  <button class="fab" onclick="addFromList()">+</button>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1216,6 +1248,7 @@ body::after {
    STATE & STORAGE
 ═══════════════════════════════════════════ */
 let APP = {
+  
   data: [],
   mode: 'offline', // 'offline' | 'sheets'
   sheetId: '',
@@ -1223,6 +1256,7 @@ let APP = {
   selectedType: '',
   selectedPerson: '',
   SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbySEKnh5YnTOq3EAy7uYkIq41Sm2cuOUSuqcGMswjDigdPSFitvz_-mDK4HuMp6dvoL/exec', // Apps Script Web App URL - user sets this
+  viewMode: {},
 };
 
 const LS = {
@@ -1393,42 +1427,80 @@ async function saveTxn() {
   if (!name) return toast('⚠️ Please enter a name');
   if (!amount || amount <= 0) return toast('⚠️ Enter a valid amount');
 
-  const txn = {
-    id: Date.now().toString(),
-    name: name.trim().toLowerCase(),
-    amount,
-    interest,
-    type: APP.currentType,
-    start: date,
-    note,
-    status: 'active',
-    createdAt: new Date().toISOString()
-  };
+  if (APP.editIndex !== undefined) {
+    // 🔥 UPDATE EXISTING
+    const txn = APP.data[APP.editIndex];
 
-  APP.data.push(txn);
-  LS.save();
+    txn.name = name.toLowerCase();
+    txn.amount = amount;
+    txn.interest = interest;
+    txn.start = date;
+    txn.note = note;
 
-  if (APP.mode === 'sheets' && APP.sheetId) {
-    await syncToSheets(txn, 'append');
+    if (APP.mode === 'sheets' && APP.sheetId) {
+      await syncToSheets(txn, 'update');
+    }
+
+    APP.editIndex = undefined;
+    toast('✏️ Updated successfully!');
+
+  } else {
+    // 🔥 NEW ENTRY
+    const txn = {
+      id: Date.now().toString(),
+      name: name.toLowerCase(),
+      amount,
+      interest,
+      type: APP.currentType,
+      start: date,
+      note,
+      status: 'active',
+      createdAt: new Date().toISOString()
+    };
+
+    APP.data.push(txn);
+
+    if (APP.mode === 'sheets' && APP.sheetId) {
+      await syncToSheets(txn, 'append');
+    }
+
+    toast('✅ Transaction saved!');
   }
 
+  // 🔥 COMMON PART (VERY IMPORTANT)
+  LS.save();
   updateDashboard();
   renderRecent();
-  toast('✅ Transaction saved!');
   go('homeScreen');
+
+  // reset button text
+  document.getElementById('submitBtn').textContent = 'Save Transaction';
 }
 
 /* ═══════════════════════════════════════════
    CALCULATION
 ═══════════════════════════════════════════ */
 function calcTxn(txn) {
-  const days = Math.max(0, Math.floor((Date.now() - new Date(txn.start)) / (1000 * 60 * 60 * 24)));
-  const dailyInt = (txn.amount * txn.interest) / (100 * 30);
-  const interestAmt = dailyInt * days;
-  const total = txn.amount + interestAmt;
+  const days = Math.max(0, Math.floor((Date.now() - new Date(txn.start)) / 86400000));
+
+  const useCompound = APP.viewMode[txn.id] ?? false;
+
+  const months = days / 30;
+
+  let total, interestAmt;
+
+  if (useCompound) {
+    // ✅ MONTHLY COMPOUND (CORRECT)
+    total = txn.amount * Math.pow(1 + txn.interest / 100, months);
+    interestAmt = total - txn.amount;
+  } else {
+    // ✅ SIMPLE (MONTHLY BASE)
+    interestAmt = (txn.amount * txn.interest * months) / 100;
+    total = txn.amount + interestAmt;
+  }
+
   return { days, interestAmt, total };
 }
-
 /* ═══════════════════════════════════════════
    DASHBOARD
 ═══════════════════════════════════════════ */
@@ -1507,37 +1579,62 @@ function renderList(type, filter = '') {
   const el = document.getElementById('listContent');
 
   const grouped = {};
+
   APP.data.forEach(d => {
-    if (d.type !== type || d.status !== 'active') return;
+    if (d.type !== type) return;
+
     const key = d.name;
-    if (!grouped[key]) grouped[key] = { total: 0, count: 0, latest: d.start };
-    const { total } = calcTxn(d);
-    grouped[key].total += total;
+
+    if (!grouped[key]) {
+      grouped[key] = { total: 0, count: 0, latest: d.start };
+    }
+
+    // only active adds to total
+    if (d.status === 'active') {
+      const { total } = calcTxn(d);
+      grouped[key].total += total;
+    }
+
     grouped[key].count++;
-    if (d.start > grouped[key].latest) grouped[key].latest = d.start;
+
+    if (d.start > grouped[key].latest) {
+      grouped[key].latest = d.start;
+    }
   });
 
-  const names = Object.keys(grouped).filter(n =>
-    !filter || n.toLowerCase().includes(filter.toLowerCase())
-  ).sort();
+  const names = Object.keys(grouped)
+    .filter(n => !filter || n.toLowerCase().includes(filter.toLowerCase()))
+    .sort();
 
   if (!names.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">${type === 'given' ? '💚' : '❤️'}</div><p>No ${type} entries yet.</p></div>`;
+    el.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">${type === 'given' ? '💚' : '❤️'}</div>
+        <p>No ${type} entries yet.</p>
+      </div>`;
     return;
   }
 
   const color = type === 'given' ? 'g' : 'r';
+
   el.innerHTML = names.map(name => {
     const g = grouped[name];
     const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const isSettled = g.total === 0;
+
     return `
       <div class="person-card" onclick="openPerson('${name}')">
         <div class="avatar ${color}">${initials}</div>
         <div class="p-info">
           <div class="p-name">${name}</div>
-          <div class="p-sub">${g.count} transaction${g.count > 1 ? 's' : ''} · Last: ${formatDate(g.latest)}</div>
+          <div class="p-sub">
+            ${g.count} transaction${g.count > 1 ? 's' : ''} · Last: ${formatDate(g.latest)}
+          </div>
         </div>
-        <div class="p-amount ${color}">${fmt(g.total)}</div>
+        <div class="p-amount ${isSettled ? '' : color}" 
+             style="${isSettled ? 'color:var(--text2)' : ''}">
+          ${isSettled ? 'Settled' : fmt(g.total)}
+        </div>
       </div>`;
   }).join('');
 }
@@ -1601,40 +1698,89 @@ function renderTxnCards(name, type, status, containerId) {
   el.innerHTML = txns.map(d => {
     const { days, interestAmt, total } = calcTxn(d);
     const closedClass = status === 'closed' ? 'closed' : (type === 'taken' ? 'taken' : '');
-    const closeBtn = status === 'active'
-      ? `<button class="close-btn" onclick="closeTxn(${d.idx})">✅ Mark as Settled</button>`
-      : '';
-    return `
-      <div class="txn-card ${closedClass}">
-        <div class="txn-header">
-          <div class="txn-date">📅 ${formatDate(d.start)}</div>
-          <div class="txn-status ${status}">${status}</div>
-        </div>
-        <div class="txn-grid">
-          <div class="txn-item">
-            <div class="txn-item-label">Principal</div>
-            <div class="txn-item-val">${fmtFull(d.amount)}</div>
-          </div>
-          <div class="txn-item">
-            <div class="txn-item-label">Interest / Month</div>
-            <div class="txn-item-val">${d.interest}%</div>
-          </div>
-          <div class="txn-item">
-            <div class="txn-item-label">⏱ Days</div>
-            <div class="txn-item-val">${days}</div>
-          </div>
-          <div class="txn-item">
-            <div class="txn-item-label">📈 Interest Earned</div>
-            <div class="txn-item-val">${fmtFull(interestAmt)}</div>
-          </div>
-        </div>
-        ${d.note ? `<div style="font-size:12px;color:var(--text2);margin-bottom:10px;">📝 ${d.note}</div>` : ''}
-        <div class="txn-total-row">
-          <div class="txn-total-label">🔢 Total Due</div>
-          <div class="txn-total-val">${fmtFull(total)}</div>
-        </div>
-        ${closeBtn}
-      </div>`;
+    const actionBtns = status === 'active'
+  ? `
+    <div style="display:flex;gap:8px;margin-top:12px;">
+      <button class="close-btn" style="flex:1;" onclick="closeTxn(${d.idx})">
+        ✅ Settle
+      </button>
+      <button class="close-btn" style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text);" onclick="editTxn(${d.idx})">
+        ✏️ Edit
+      </button>
+    </div>
+  `
+  : '';
+ return `
+<div class="txn-card ${closedClass}">
+
+  <!-- HEADER -->
+  <div class="txn-header" style="align-items:center;justify-content:space-between;">
+    
+    <!-- DATE -->
+    <div class="txn-date">📅 ${formatDate(d.start)}</div>
+
+    <!-- RIGHT SIDE -->
+    <div style="display:flex;align-items:center;gap:10px;">
+      
+      <!-- TOGGLE -->
+      <div class="switch ${APP.viewMode[d.id] ? 'on' : ''}" 
+           onclick="toggleViewMode('${d.id}')"></div>
+
+      <!-- TYPE TEXT -->
+      <span style="
+        font-size:11px;
+        min-width:70px;
+        color:${APP.viewMode[d.id] ? 'var(--green)' : 'var(--text2)'};
+        font-weight:600;
+      ">
+        ${APP.viewMode[d.id] ? 'Compound' : 'Simple'}
+      </span>
+
+      <!-- STATUS -->
+      <div class="txn-status ${status}">${status}</div>
+
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="txn-grid">
+
+    <div class="txn-item">
+      <div class="txn-item-label">Principal</div>
+      <div class="txn-item-val">${fmtFull(d.amount)}</div>
+    </div>
+
+    <div class="txn-item">
+      <div class="txn-item-label">Interest</div>
+      <div class="txn-item-val">${d.interest}%</div>
+    </div>
+
+    <div class="txn-item">
+      <div class="txn-item-label">Days</div>
+      <div class="txn-item-val">${days}</div>
+    </div>
+
+    <div class="txn-item">
+      <div class="txn-item-label">Interest Earned</div>
+      <div class="txn-item-val">${fmtFull(interestAmt)}</div>
+    </div>
+
+  </div>
+
+  ${d.note ? `
+    <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">
+      📝 ${d.note}
+    </div>` : ''}
+
+  <!-- TOTAL -->
+  <div class="txn-total-row" style="display:flex;justify-content:space-between;align-items:center;">
+    <div class="txn-total-label">Total Due</div>
+    <div class="txn-total-val">${fmtFull(total)}</div>
+  </div>
+
+  ${actionBtns}
+
+</div>`;
   }).join('');
 }
 
@@ -1787,6 +1933,53 @@ async function loadFromSheet() {
     console.error("❌ Load failed:", e);
     APP.data = []; // fallback
   }
+}
+
+
+function addFromList() {
+  // use already selected list type
+  selectType(APP.selectedType);
+}
+function toggleViewMode(id) {
+  APP.viewMode[id] = !APP.viewMode[id];
+  renderPersonDetail(APP.selectedPerson, APP.selectedType);
+}
+
+
+
+function editTxn(idx) {
+  const txn = APP.data[idx];
+
+  // store editing index
+  APP.editIndex = idx;
+
+  // fill form
+  document.getElementById('fName').value = txn.name;
+  document.getElementById('fAmount').value = txn.amount;
+  document.getElementById('fInterest').value = txn.interest;
+  document.getElementById('fDate').value = txn.start;
+  document.getElementById('fNote').value = txn.note || '';
+
+  // set type
+  APP.currentType = txn.type;
+
+  const badge = document.getElementById('formTypeBadge');
+  const btn = document.getElementById('submitBtn');
+
+  if (txn.type === 'given') {
+    badge.className = 'form-type-badge given';
+    badge.textContent = '💰 Given – You Lent Money';
+    btn.className = 'submit-btn given';
+  } else {
+    badge.className = 'form-type-badge taken';
+    badge.textContent = '🤝 Taken – You Borrowed Money';
+    btn.className = 'submit-btn taken';
+  }
+
+  // change button text
+  btn.textContent = 'Update Transaction';
+
+  go('formScreen');
 }
   /* ═══════════════════════════════════════════
    PWA SERVICE WORKER REGISTRATION
