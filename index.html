@@ -1957,7 +1957,7 @@ function editTxn(idx) {
   document.getElementById('fName').value = txn.name;
   document.getElementById('fAmount').value = txn.amount;
   document.getElementById('fInterest').value = txn.interest;
-  document.getElementById('fDate').value = txn.start;
+ document.getElementById('fDate').value = formatDateForInput(txn.start);
   document.getElementById('fNote').value = txn.note || '';
 
   // set type
@@ -1980,6 +1980,13 @@ function editTxn(idx) {
   btn.textContent = 'Update Transaction';
 
   go('formScreen');
+}
+function formatDateForInput(dateStr) {
+  const d = new Date(dateStr);
+
+  if (isNaN(d)) return '';
+
+  return d.toISOString().split('T')[0]; // YYYY-MM-DD
 }
   /* ═══════════════════════════════════════════
    PWA SERVICE WORKER REGISTRATION
