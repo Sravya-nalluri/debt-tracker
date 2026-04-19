@@ -155,10 +155,25 @@ body::after {
 }
 
 .summary-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
+@media (max-width: 480px) {
+  .summary-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sum-box:last-child {
+    grid-column: span 2;
+  }
+}
+
+.sum-amount {
+  font-size: 14px;
+  word-break: break-word;
+}
+
 
 .sum-box {
   flex: 1;
