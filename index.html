@@ -1583,7 +1583,7 @@ function renderAnniversaryReminders() {
 
   section.innerHTML = `
     <div class="reminders-section">
-      <div class="reminders-title">🔔 Anniversary Reminders</div>
+      <div class="reminders-title">🔔 Annual Reminders</div>
       ${items}
     </div>`;
 }
@@ -1760,7 +1760,7 @@ function renderTxnCards(name, type, status, containerId) {
         <span style="font-size:16px;">🔔</span>
         <span>${anniv.type === 'hit'
           ? (anniv.daysAgo === 0
-              ? `${anniv.year}-Year Anniversary Today!`
+              ? `${anniv.year}-Year Annual year Today!`
               : `${anniv.year}-Year Anniversary · ${anniv.daysAgo} day${anniv.daysAgo !== 1 ? 's' : ''} ago`)
           : `${anniv.year}-Year Anniversary in ${anniv.daysUntil} day${anniv.daysUntil !== 1 ? 's' : ''}`}
         </span>
