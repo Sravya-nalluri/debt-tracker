@@ -1761,8 +1761,8 @@ function renderTxnCards(name, type, status, containerId) {
         <span>${anniv.type === 'hit'
           ? (anniv.daysAgo === 0
               ? `${anniv.year}-Year Annual year Today!`
-              : `${anniv.year}-Year Annual year · ${anniv.daysAgo} day${anniv.daysAgo !== 1 ? 's' : ''} ago`)
-          : `${anniv.year}-Year Annual year in ${anniv.daysUntil} day${anniv.daysUntil !== 1 ? 's' : ''}`}
+              : `${anniv.year}-Year · ${anniv.daysAgo} day${anniv.daysAgo !== 1 ? 's' : ''} ago`)
+          : `${anniv.year}-Year in ${anniv.daysUntil} day${anniv.daysUntil !== 1 ? 's' : ''}`}
         </span>
       </div>` : '';
 
