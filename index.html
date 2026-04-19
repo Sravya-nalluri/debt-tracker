@@ -1180,7 +1180,7 @@ body::after {
     <!-- Amount -->
     <div class="field-group">
       <div class="field-label">Amount (₹)</div>
-      <input class="field-input" id="fAmount" type="number" placeholder="5000" inputmode="decimal" min="1">
+      <input class="field-input" id="fAmount" type="text" oninput="formatAmount(this)" placeholder="5,000">
     </div>
 
     <!-- Interest -->
@@ -1487,7 +1487,9 @@ function todayStr() {
 
 async function saveTxn() {
   const name = document.getElementById('fName').value.trim();
-  const amount = parseFloat(document.getElementById('fAmount').value);
+ const amount = parseFloat(
+  document.getElementById('fAmount').value.replace(/,/g, '')
+);
   const interest = parseFloat(document.getElementById('fInterest').value) || 0;
   const date = document.getElementById('fDate').value || todayStr();
   const note = document.getElementById('fNote').value.trim();
@@ -2080,6 +2082,15 @@ function addTxnToPerson() {
   }, 50);
 }
 
+  function formatAmount(input) {
+  let value = input.value.replace(/,/g, '');
+
+  if (!value) return;
+
+  if (isNaN(value)) return;
+
+  input.value = Number(value).toLocaleString('en-IN');
+}
   /* ═══════════════════════════════════════════
    PWA SERVICE WORKER REGISTRATION
 ═══════════════════════════════════════════ */
