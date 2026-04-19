@@ -1262,20 +1262,15 @@ async function init() {
 
   go('homeScreen');
 
-  // ✅ FIRST: try loading from sheet
+  // 🔥 ONLY SHEET
   if (APP.mode === 'sheets' && APP.sheetId) {
     await loadFromSheet();
-  } else {
-    // fallback if no sheet
-    LS.load();
   }
 
-  // ✅ THEN render UI
   updateDashboard();
   renderRecent();
   updateSyncBadge();
 }
-
 /* ═══════════════════════════════════════════
    NAVIGATION
 ═══════════════════════════════════════════ */
@@ -1770,33 +1765,30 @@ async function loadFromSheet() {
   try {
     if (!APP.sheetId) return;
 
-    console.log("⏳ Loading from sheet...");
+    console.log("📡 Fetching from sheet...");
 
-    const res = await fetch(`/api/getData?sheetId=${APP.sheetId}`);
+    const res = await fetch(
+      `/api/getData?sheetId=${APP.sheetId}&t=${Date.now()}`
+    );
+
     const data = await res.json();
 
-    console.log("✅ Sheet data:", data);
+    console.log("📥 Sheet data:", data);
 
+    // ✅ ALWAYS TRUST SHEET
     if (Array.isArray(data)) {
       APP.data = data;
 
-      localStorage.setItem(
-        'debtbook_data',
-        JSON.stringify(data)
-      );
-
-      // 🔥 FORCE CLEAN UI RENDER
-      requestAnimationFrame(() => {
-        updateDashboard();
-        renderRecent();
-      });
+      // optional: keep backup
+      localStorage.setItem('debtbook_data', JSON.stringify(data));
     }
 
   } catch (e) {
     console.error("❌ Load failed:", e);
+    APP.data = []; // fallback
   }
 }
-/* ═══════════════════════════════════════════
+  /* ═══════════════════════════════════════════
    PWA SERVICE WORKER REGISTRATION
 ═══════════════════════════════════════════ */
 if ('serviceWorker' in navigator) {
